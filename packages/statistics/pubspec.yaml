@@ -1,0 +1,19 @@
+name: opencloset_statistics
+description: Wardrobe statistics and analytics for OpenCloset.
+
+version: 0.0.1
+homepage: https://github.com/sophie-nayebi/OpenCloset
+
+publish_to: "none"
+
+repository: https://github.com/sophie-nayebi/OpenCloset/tree/main/packages/statistics
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter: { sdk: flutter }
+  charts: ^2.5.2
+
+dev_dependencies:
+  flutter_test: { sdk: flutter }

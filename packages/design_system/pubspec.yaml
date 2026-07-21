@@ -1,0 +1,19 @@
+name: opencloset_design_system
+description: Design system — tokens, typography, color palette for OpenCloset.
+
+version: 0.0.1
+homepage: https://github.com/sophie-nayebi/OpenCloset
+
+publish_to: "none"
+
+repository: https://github.com/sophie-nayebi/OpenCloset/tree/main/packages/design_system
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter: { sdk: flutter }
+  flutter_colorgen: ^7.2.0
+
+dev_dependencies:
+  flutter_test: { sdk: flutter }

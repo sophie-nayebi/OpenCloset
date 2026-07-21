@@ -1,0 +1,27 @@
+name: opencloset
+description: A wardrobe and outfit management application.
+version: 0.0.1
+description: A wardrobe and outfit management application built with Flutter.
+license: MIT
+
+publish_to: "none"
+
+repository: https://github.com/sophie-nayebi/OpenCloset
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.2.0
+  flutter_riverpod: ^2.5.0
+  riverpod: ^2.5.0
+  drift: ^2.23.0
+  drift_flutter_extensions: ^2.23.0
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0

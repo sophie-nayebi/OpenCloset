@@ -1,0 +1,26 @@
+name: opencloset_database
+description: Drift database layer for local persistence in OpenCloset.
+
+version: 0.0.1
+homepage: https://github.com/sophie-nayebi/OpenCloset
+
+publish_to: "none"
+
+repository: https://github.com/sophie-nayebi/OpenCloset/tree/main/packages/database
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter: { sdk: flutter }
+  drift: ^2.23.0
+  drift_flutter_extensions: ^2.23.0
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  drift_dev_tools: {
+    run: [
+      drift
+    ]
+    dev: true
+  }

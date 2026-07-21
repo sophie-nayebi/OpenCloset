@@ -1,0 +1,19 @@
+name: opencloset_core
+description: Core shared logic and utilities for OpenCloset.
+
+version: 0.0.1
+homepage: https://github.com/sophie-nayebi/OpenCloset
+
+publish_to: "none"
+
+repository: https://github.com/sophie-nayebi/OpenCloset/tree/main/packages/core
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter: { sdk: flutter }
+
+dev_dependencies:
+  flutter_test: { sdk: flutter }
+  flutter_lints: ^3.0.0
