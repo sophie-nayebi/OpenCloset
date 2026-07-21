@@ -1,0 +1,23 @@
+# Flutter
+/build
+*.log
+*.dart_tool
+*.pub
+pubspec.lock
+ios/build
+android/app/build
+android/app/src/main/res/values-*/strings.xml
+ios/Runner.xcworkspace
+ios/Runner.xcconfig
+macos/build
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
