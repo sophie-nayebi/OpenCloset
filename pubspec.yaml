@@ -1,7 +1,6 @@
 name: opencloset
-description: A wardrobe and outfit management application.
-version: 0.0.1
 description: A wardrobe and outfit management application built with Flutter.
+version: 0.0.1
 license: MIT
 
 publish_to: "none"
