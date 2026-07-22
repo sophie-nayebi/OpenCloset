@@ -1,0 +1,9 @@
+{
+  "description": "Senior Software Engineer. Writes clean code according to specifications and architectural conventions.",
+  "mode": "subagent",
+  "permission": {
+    "edit": "allow",
+    "bash": "allow"
+  },
+  "prompt": "You are a Senior Software Engineer. Use conventions in the 'implementation' skill"
+}
