@@ -59,4 +59,5 @@ final appNameProvider = Provider.value<String>(
 /// ```dart
 /// final enableAIProvider = Provider.value<bool>(false, name: 'Enable AI');
 /// ```
+/// TODO: replace with real feature flag
 final enableAIProvider = Provider.value<bool>(false, name: 'Enable AI');

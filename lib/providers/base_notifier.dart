@@ -31,13 +31,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Base class for providers that manage synchronous state.
 ///
-/// Subclasses override `build()` to return the current state and optionally
-/// override `onChanged()` or `onDispose()` for side effects.
+/// Extends [Notifier<T>] with a clean interface that exposes mutable state
+/// through the inherited `state` property. Subclasses override `build()` to return
+/// the current state and optionally override `onChanged()` or `onDispose()` for
+/// side effects.
 ///
-/// The `state` property provides an immutable update pattern: always assign
-/// a new value rather than mutating existing state.
+/// ## Immutable Update Pattern
 ///
-/// Example:
+/// The `state` property follows an immutable update pattern: always assign a new
+/// value rather than mutating existing state. For example:
+///
+/// ```dart
+/// // Correct - immutable update
+/// state = state + 1;
+/// 
+/// // Correct - assignment with new value
+/// state = newValue;
+/// ```
+///
+/// Subclasses typically track internal mutable state in private fields and return
+/// that value from `build()`. The `state` property (inherited from [Notifier<T]])
+/// delegates to `build()` to get the current value and to `notifierState` to update it.
+///
+/// ## When to use
+///
+/// - State changes in response to user actions (e.g., toggling a filter)
+/// - Computed/derived state from other providers
+/// - Form state or editing state
+///
+/// ## Example
+///
 /// ```dart
 /// class CounterNotifier extends _$CounterNotifier {
 ///   @override

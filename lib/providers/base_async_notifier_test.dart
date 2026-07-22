@@ -7,6 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../base_async_notifier.dart';
 
+/// Helper to assert that a future throws an exception.
+void expectThrowsThrowsError(Future<void> future) async {
+  await expectAsync(() => future).throwsException;
+}
+
 /// Test provider that extends [AsyncNotifier] and provides a simple load implementation.
 /// Used to test the async notifier behavior in a controlled environment.
 class _TestDataProvider extends AsyncNotifier<String> {
@@ -49,11 +54,11 @@ void main() {
     expect(state.loadedError, null);
   });
 
-  test('AsyncState.error(e, st) creates an error state', () {
+ test('AsyncState.error(e, st) creates an error state', () {
     const Exception error = Exception('Simulated error');
     final stackTrace = StackTrace();
     final state = AsyncState.error(error, stackTrace);
-
+    
     expect(state.loading, isFalse);
     expect(state.error, isTrue);
     expect(state.data, isFalse);
@@ -62,18 +67,21 @@ void main() {
     expect(state.stackTrace, stackTrace);
   });
 
-  test('AsyncState.loading().loading returns true', () {
-    const AsyncState<String> loadingState = AsyncState.loading();
-    expect(loadingState.loading, isTrue);
+  test('AsyncNotifier transitions loading → data states', () async {
+    final notifier = _TestDataProvider();
+    expect(notifier.state.loading, isTrue); // initial state
+    
+    final data = await notifier.load();
+    expect(notifier.state.loading, isFalse);
+    expect(notifier.state.data, isTrue);
+    expect(notifier.state.loadedData, 'test-data');
   });
 
-  test('AsyncState.loading().data returns false', () {
-    const AsyncState<String> loadingState = AsyncState.loading();
-    expect(loadingState.data, isFalse);
-  });
-
-  test('AsyncState.loading().error returns false', () {
-    const AsyncState<String> loadingState = AsyncState.loading();
-    expect(loadingState.error, isFalse);
+  test('AsyncNotifier transitions to error on exception', () async {
+    final notifier = _TestDataProvider();
+    notifier.setShouldFail(true);
+    
+    await expectThrowsThrowsError(notifier.load());
+    expect(notifier.state.error, isTrue);
   });
 }
