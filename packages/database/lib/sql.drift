@@ -1,0 +1,7 @@
+-- OpenCloset Database SQL Queries
+--
+-- This file contains custom SQL queries and triggers for the OpenCloset database.
+-- Drift will generate methods on the OpenClosetDatabase class based on the queries defined here.
+--
+-- For now, no custom queries are defined. All queries are handled
+-- through the generated DAO methods in tables.dart.

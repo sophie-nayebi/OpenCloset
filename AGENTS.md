@@ -10,6 +10,8 @@ Read:
 
 Reuse existing patterns before creating new ones.
 
+This project is hosted on github under user sophie-nayebi and with the name OpenCloset. Work is tracked with github issues available through the github MCP.
+
 ---
 
 ## Principles
@@ -100,21 +102,6 @@ Images remain on disk.
 
 Avoid raw SQL.
 
----
-
-## Images
-
-Store:
-
-- Original
-- Transparent PNG
-- Mask
-- Thumbnail
-
-Reference them by UUID.
-
----
-
 ## UI
 
 Support:
@@ -131,22 +118,6 @@ Support accessibility.
 
 ---
 
-## Code Style
-
-Small files.
-
-Small widgets.
-
-Small functions.
-
-Prefer composition.
-
-Prefer immutable models.
-
-Document public APIs.
-
----
-
 ## Testing
 
 New functionality should include:
@@ -156,16 +127,6 @@ New functionality should include:
 - Integration tests for critical flows
 
 Bug fixes should include regression tests.
-
----
-
-## Security
-
-Validate imported data.
-
-Never trust archive contents.
-
-Never upload user images without explicit user action.
 
 ---
 

@@ -12,18 +12,6 @@ No account should be required.
 
 ---
 
-## Goals
-
-- Open source
-- Offline first
-- Cross-platform
-- Fast
-- Privacy respecting
-- Easy to contribute to
-- Long-term maintainable
-
----
-
 ## Supported Platforms
 
 Priority order:
@@ -35,34 +23,6 @@ Priority order:
 5. Windows
 
 All core functionality should work on every platform.
-
----
-
-## Target Users
-
-People who:
-
-- own many clothes
-- build outfits
-- want wardrobe statistics
-- practice capsule wardrobes
-- travel frequently
-- enjoy personal organization
-
----
-
-## Core Features
-
-- Clothing catalog
-- Clothing photography
-- Background removal
-- Manual image editing
-- Outfit builder
-- Daily wear tracking
-- Statistics
-- Import / Export
-- Optional synchronization
-- Optional AI assistance
 
 ---
 
@@ -79,73 +39,6 @@ This is NOT:
 AI assists the user.
 
 AI never replaces user ownership.
-
----
-
-## Design Principles
-
-User owns their data.
-
-Everything important works offline.
-
-Cloud features are optional.
-
-Images never leave the device unless explicitly exported.
-
-Data formats remain open.
-
----
-
-## Technology
-
-UI:
-Flutter
-
-Language:
-Dart
-
-Database:
-SQLite (Drift)
-
-Routing:
-GoRouter
-
-State:
-Riverpod
-
-Image Processing:
-ONNX Runtime
-
-Charts:
-Flutter charts
-
-Testing:
-flutter_test + integration_test
-
-CI:
-GitHub Actions
-
----
-
-## Architecture
-
-Presentation
-
-↓
-
-Application
-
-↓
-
-Domain
-
-↓
-
-Infrastructure
-
-Business logic never belongs in widgets.
-
-Infrastructure should be replaceable.
 
 ---
 
