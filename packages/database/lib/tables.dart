@@ -1,77 +1,185 @@
-/// Table definitions for the OpenCloset database using Drift.
+/// Table definitions for the OpenCloset database using CSV storage.
 ///
-/// These classes define the database schema and are used to generate
-/// Drift DAO (Data Access Object) classes.
-
-import 'package:drift/drift.dart';
+/// These classes define the storage schema and are used to generate
+/// CSV column mappings and data access helpers.
 
 /// Represents the `categories` table.
 /// Stores item categories such as tops, bottoms, shoes, etc.
-@DataClassName('Category')
-class Categories extends Table with AutoIncrementingPrimaryKey {
+class Category {
+  /// Unique identifier for the category.
+  int id;
+
   /// Human-readable category name (e.g., "Tops", "Shoes", "Accessories").
-  TextColumn get name => text()();
+  String name;
 
   /// Optional description of what items belong to this category.
-  TextColumn get description => text().nullable()();
+  String? description;
 
   /// Timestamp when the category was created.
-  DateTimeColumn get createdAt => dateTime()();
+  DateTime createdAt;
+
+  Category({
+    required this.id,
+    required this.name,
+    this.description,
+    required this.createdAt,
+  });
+
+  /// Creates a new category from CSV row values.
+  factory Category.fromCSVRow(Map<String, String> row) {
+    return Category(
+      id: int.parse(row['id'] ?? '0'),
+      name: row['name'] ?? '',
+      description: row['description']?.trim().isEmpty ? null : row['description'],
+      createdAt: DateTime.parse(row['created_at'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+
+  /// Serializes the category to CSV-compatible map.
+  Map<String, String> toCSVRow() {
+    return {
+      'id': id.toString(),
+      'name': name,
+      'description': description ?? '',
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 }
 
 /// Represents the `items` table.
 /// Stores wardrobe items (clothing, shoes, accessories).
-@DataClassName('Item')
-class Items extends Table with AutoIncrementingPrimaryKey {
+class Item {
+  /// Unique identifier for the item.
+  int id;
+
   /// Display name of the wardrobe item.
-  TextColumn get name => text()();
+  String name;
 
   /// Optional description of the item.
-  TextColumn get description => text().nullable()();
+  String? description;
 
   /// Optional category this item belongs to.
-  IntColumn get categoryId => integer().nullable().references(Categories, #id)();
+  int? categoryId;
 
   /// UUID of the image stored on disk for this item.
-  TextColumn get imageUuid => text()();
+  String imageUuid;
 
   /// Timestamp when the item was created.
-  DateTimeColumn get createdAt => dateTime()();
+  DateTime createdAt;
 
   /// Timestamp when the item was last updated.
-  DateTimeColumn get updatedAt => dateTime()();
+  DateTime updatedAt;
+
+  Item({
+    required this.id,
+    required this.name,
+    this.description,
+    this.categoryId,
+    required this.imageUuid,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  /// Creates a new item from CSV row values.
+  factory Item.fromCSVRow(Map<String, String> row) {
+    return Item(
+      id: int.parse(row['id'] ?? '0'),
+      name: row['name'] ?? '',
+      description: row['description']?.trim().isEmpty ? null : row['description'],
+      categoryId: row['category_id']?.trim().isEmpty ? null : int.parse(row['category_id']!),
+      imageUuid: row['image_uuid'] ?? '',
+      createdAt: DateTime.parse(row['created_at'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(row['updated_at'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+
+  /// Serializes the item to CSV-compatible map.
+  Map<String, String> toCSVRow() {
+    return {
+      'id': id.toString(),
+      'name': name,
+      'description': description ?? '',
+      'category_id': categoryId?.toString() ?? '',
+      'image_uuid': imageUuid,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 }
 
 /// Represents the `outfits` table.
 /// Stores user-created outfits (collections of items).
-@DataClassName('Outfit')
-class Outfits extends Table with AutoIncrementingPrimaryKey {
+class Outfit {
+  /// Unique identifier for the outfit.
+  int id;
+
   /// Human-readable name of the outfit.
-  TextColumn get name => text()();
+  String name;
 
   /// Optional description of the outfit.
-  TextColumn get description => text().nullable()();
+  String? description;
 
   /// Timestamp when the outfit was created.
-  DateTimeColumn get createdAt => dateTime()();
+  DateTime createdAt;
 
   /// Timestamp when the outfit was last updated.
-  DateTimeColumn get updatedAt => dateTime()();
+  DateTime updatedAt;
+
+  Outfit({
+    required this.id,
+    required this.name,
+    this.description,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  /// Creates a new outfit from CSV row values.
+  factory Outfit.fromCSVRow(Map<String, String> row) {
+    return Outfit(
+      id: int.parse(row['id'] ?? '0'),
+      name: row['name'] ?? '',
+      description: row['description']?.trim().isEmpty ? null : row['description'],
+      createdAt: DateTime.parse(row['created_at'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(row['updated_at'] ?? DateTime.now().toIso8601String()),
+    );
+  }
+
+  /// Serializes the outfit to CSV-compatible map.
+  Map<String, String> toCSVRow() {
+    return {
+      'id': id.toString(),
+      'name': name,
+      'description': description ?? '',
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
 }
 
 /// Represents the `outfit_items` junction table.
 /// Links outfits to their constituent items (many-to-many relationship).
-@DataClassName('OutfitItem')
-class OutfitItems extends Table {
+class OutfitItem {
   /// Foreign key to the outfits table.
-  IntColumn get outfitId => integer().references(Outfits, #id)();
+  int outfitId;
 
   /// Foreign key to the items table.
-  IntColumn get itemId => integer().references(Items, #id)();
-}
+  int itemId;
 
-/// Mixin that provides auto-incrementing primary key for tables.
-/// This replaces the need to define an `id` column manually.
-mixin AutoIncrementingPrimaryKey on Table {
-  IntColumn get id => integer().autoIncrement()();
+  OutfitItem({required this.outfitId, required this.itemId});
+
+  /// Creates a new outfit item from CSV row values.
+  factory OutfitItem.fromCSVRow(Map<String, String> row) {
+    return OutfitItem(
+      outfitId: int.parse(row['outfit_id'] ?? '0'),
+      itemId: int.parse(row['item_id'] ?? '0'),
+    );
+  }
+
+  /// Serializes the outfit item to CSV-compatible map.
+  Map<String, String> toCSVRow() {
+    return {
+      'outfit_id': outfitId.toString(),
+      'item_id': itemId.toString(),
+    };
+  }
 }

@@ -1,31 +1,15 @@
-/// Unsupported platform database connection implementation.
+/// Unsupported platform handling.
 ///
-/// This module throws a [StateError] for platforms that are not supported
-/// by OpenCloset's database layer.
+/// For any platform that doesn't support the CSV storage layer, provide
+/// a graceful fallback or error handling mechanism.
 
-import 'dart:io';
-import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
-
-/// Throws an error for unsupported platforms.
-///
-/// This is the fallback for any platform that is neither native nor web.
-/// Such platforms should not exist with the current OpenCloset architecture.
-DriftDatabase create() {
-  throw StateError('Database not supported on this platform.');
-}
-
-/// Returns whether the current platform is a native platform.
-bool isNative() {
+/// Returns whether the current platform is unsupported.
+bool isUnsupportedPlatform() {
+  // For P0, all platforms are supported.
   return false;
 }
 
-/// Returns whether the current platform is unsupported.
-bool isUnsupported() {
-  return true;
-}
-
-/// Creates an in-memory database connection for testing.
-DriftDatabase createForTesting() {
-  return driftDatabase(name: 'opencloset.db');
+/// Creates an error message for unsupported platforms.
+String unsupportedPlatformError() {
+  return 'CSV storage is not supported on this platform.';
 }

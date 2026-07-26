@@ -1,0 +1,3 @@
+packages:
+  opencloset_database:
+    path: packages/database

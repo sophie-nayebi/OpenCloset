@@ -28,7 +28,7 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 |-------|----------|
 | Create project architecture | P0 |
 | Configure Riverpod | P0 |
-| Configure Drift | P0 |
+| Configure CSV Storage | P0 |
 | Configure routing | P0 |
 | Create dependency injection | P0 |
 | Create app settings | P0 |
@@ -63,7 +63,6 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 |------------|--------|
 | Flutter 4.x+ | External |
 | Riverpod | External |
-| Drift / Drift Flutter | External |
 | GoRouter | External |
 | Flutter Internationalization | External |
 | Provider | External (for preferences) |
@@ -74,7 +73,7 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 |---------|---------|
 | **Project architecture** | Enforce layered, dependency-inverted structure from day one |
 | **Riverpod configuration** | Provide reusable `AsyncNotifier`, `Notifier`, and `Provider` patterns |
-| **Drift configuration** | Initialize DB schema, connect to mobile/desktop SQLite |
+| **CSV Storage configuration** | Initialize CSV file storage layer for all data persistence |
 | **Routing** | GoRouter setup with named routes and deep linking stubs |
 | **Dependency injection** | `riverpod`-based DI container in `lib/app/bootstrap.dart` |
 | **App settings** | Settings page: theme toggle, export option, about info |
@@ -85,15 +84,15 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 
 | Story | Story Points | Ideal Days | Likely Days | Worst Case | Confidence |
 |-------|--------------|------------|-------------|------------|------------|
-| Create project architecture | 5 | 2 | 3 | 5 | 80% |
-| Configure Riverpod | 3 | 1 | 1 | 2 | 90% |
-| Configure Drift | 5 | 2 | 3 | 5 | 75% |
-| Configure routing | 3 | 1 | 2 | 3 | 85% |
-| Create dependency injection | 3 | 1 | 1 | 2 | 90% |
-| Create app settings | 5 | 2 | 2 | 3 | 80% |
-| Create preferences service | 3 | 1 | 1 | 2 | 85% |
-| GitHub Actions | 3 | 1 | 1 | 2 | 90% |
-| **Total** | **30** | **11** | **14** | **23** | |
+| Create project architecture | 5 | 2d | 3d | 5d | 80% |
+| Configure Riverpod | 3 | 1d | 1d | 2d | 90% |
+| Configure CSV Storage | 3 | 1d | 1d | 2d | 90% |
+| Configure routing | 3 | 1d | 2d | 3d | 85% |
+| Create dependency injection | 3 | 1d | 1d | 2d | 90% |
+| Create app settings | 5 | 2d | 2d | 3d | 80% |
+| Create preferences service | 3 | 1d | 1d | 2d | 85% |
+| GitHub Actions | 3 | 1d | 1d | 2d | 90% |
+| **Total** | **28** | **10d** | **12d** | **19d** | |
 
 ## Acceptance Criteria
 
@@ -113,11 +112,17 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 - [ ] Example `Notifier` provider demonstrates state mutation
 - [ ] All feature providers are registered in `app.dart`
 
-### Drift
+### CSV Storage
 
-- [ ] Database schema defined with at least one table (stub)
-- [ ] Database connection established in `packages/database/`
-- [ ] Migrations file exists (empty, ready for v1)
+- [ ] `packages/database/` directory exists
+- [ ] CSV storage abstraction in `packages/database/lib/database.dart`:
+  - [ ] `create()` method returns a platform-appropriate storage path
+  - [ ] `OpenClosetDatabase` class with methods for all CRUD operations
+  - [ ] File paths use platform-appropriate directories
+  - [ ] Database connection is testable (injectable)
+- [ ] CSV schema file (`packages/database/schema.csv`) defines all columns
+- [ ] No raw SQL or SQLite dependencies in the codebase
+- [ ] Storage abstraction is testable with in-memory mocks
 
 ### Routing
 
@@ -147,7 +152,7 @@ Build the cross-platform skeleton of OpenCloset — an offline-first, privacy-re
 ### GitHub Actions
 
 - [ ] `lib/.github/workflows/ci.yml` exists
-- [ ] Pipeline runs on `push` to `main` and `pull_request`
+- [ ] Workflow triggers on `push` to `main` and `pull_request`
 - [ ] Steps: lint, analyze, test
 - [ ] All jobs pass on a clean build
 
@@ -202,7 +207,7 @@ No migration needed — this is the initial release.
 
 ## Performance Considerations
 
-- DB connection initialized lazily
+- CSV files loaded lazily on demand
 - Route preloading for critical paths
 - Theme switch must not cause full app rebuild
 
@@ -214,6 +219,6 @@ No migration needed — this is the initial release.
 
 ---
 
-**Estimated Effort**: 30 story points | 11–14 likely days | 23 worst case days  
+**Estimated Effort**: 28 story points | 10–12 likely days | 19 worst case days  
 **Team Size**: 2–4 developers  
-**Recommendation**: Start with architecture + DI + Riverpod, then add Drift + routing in parallel, finish with settings + preferences + CI/CD.
+**Recommendation**: Start with architecture + DI + Riverpod, then add CSV Storage + routing in parallel, finish with settings + preferences + CI/CD.

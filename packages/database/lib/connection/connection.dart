@@ -1,13 +1,16 @@
-/// Platform-specific database connection factory.
+/// Platform-specific storage path resolution.
 ///
-/// This module uses conditional exports to expose the right connection factory
-/// depending on the platform (native vs web).
-///
-/// On native platforms (iOS, Android, Linux, macOS, Windows), this delegates
-/// to native.dart which uses file-based SQLite storage.
-/// On web platforms, this delegates to web.dart which uses in-memory storage.
-/// On unsupported platforms, this delegates to unsupported.dart which throws.
+/// This module encapsulates platform-specific path handling
+/// for the CSV storage layer.
 
-export 'unsupported.dart'
-    if (dart.library.js_interop) 'web.dart'
-    if (dart.library.ffi) 'native.dart';
+/// Returns the default storage path for the current platform.
+String resolveStoragePath() {
+  return _platformSpecificPath();
+}
+
+/// Returns the default storage path for the current platform.
+String _platformSpecificPath() {
+  // Platform-specific path resolution would go here.
+  // For P0, we use a simple platform detection approach.
+  return 'data/opencloset';
+}

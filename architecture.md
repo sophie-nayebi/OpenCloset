@@ -9,22 +9,22 @@ OpenCloset follows a layered, dependency-inverted architecture. This ensures cle
 │           Presentation Layer            │
 │  Widgets  │  Riverpod State  │  Navigation│
 └─────────────────────────────────────────┘
-                           ↓
+                            ↓
 ┌─────────────────────────────────────────┐
 │           Application Layer             │
 │  Use Cases  │  State Management  │  Logic│
 └─────────────────────────────────────────┘
-                           ↓
+                            ↓
 ┌─────────────────────────────────────────┐
 │              Domain Layer               │
 │  Models  │  Entities  │  Use Case       │
 │          │  Interfaces│  Contracts     │
 └─────────────────────────────────────────┘
-                           ↓
+                            ↓
 ┌─────────────────────────────────────────┐
 │           Infrastructure Layer          │
-│  Database  │  Image Processing  │ Storage│
-│  (Drift)   │  (ONNX Runtime)  │  (File) │
+│  Storage  │  Image Processing  │ IO     │
+│  (CSV)    │  (ONNX Runtime)  │  (File) │
 └─────────────────────────────────────────┘
 ```
 
@@ -72,7 +72,7 @@ Features live in isolated directories under `lib/features/`. They expose their p
 
 ### Infrastructure
 
-- Database access (Drift)
+- File-based storage (CSV)
 - Image processing (ONNX Runtime, masking, thumbnails)
 - File storage and management
 - Export/import handlers

@@ -14,6 +14,17 @@ This project is hosted on github under user sophie-nayebi and with the name Open
 
 ---
 
+## Build
+
+For database package, cd into the directory and use:
+```
+flutter test packages/database/ # To test
+```
+---
+
+
+---
+
 ## Principles
 
 Prioritize:
@@ -32,7 +43,6 @@ Avoid clever code.
 - Flutter
 - Dart
 - Riverpod
-- Drift
 - GoRouter
 - Material 3
 
@@ -94,13 +104,15 @@ Application state belongs in providers.
 
 ## Database
 
-Use Drift.
+Use CSV file storage.
 
 Store metadata only.
 
 Images remain on disk.
 
-Avoid raw SQL.
+No SQL or external database dependencies.
+
+---
 
 ## UI
 

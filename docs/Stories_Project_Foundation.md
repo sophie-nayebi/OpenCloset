@@ -200,105 +200,125 @@ Create a `lib/providers/` directory containing base classes and examples demonst
 
 ---
 
-## Story 3: Configure Drift
+## Story 3: Configure CSV Storage
 
 ### Overview
 
-Initialize Drift as the SQLite database layer with schema definition, connection setup, and migration framework.
+Set up a simple CSV file-based storage layer so all features can persist data without SQLite or raw SQL.
 
 ### Purpose
 
-Provide a type-safe database layer so all features can persist data consistently without raw SQL.
+Provide a lightweight, zero-config data persistence layer so all features can store and retrieve items, categories, and outfits.
 
 ### Business Value
 
 - Data persistence works from day one
-- Migrations are safe and tracked
-- All features share the same database API
+- No external database dependencies to manage
+- Data is human-readable and portable (plain CSV files)
+- Simple file operations make debugging easy
 
 ### Technical Value
 
-- Type-safe queries via Drift's code generation
-- Migrations are versioned and tested
-- No raw SQL strings in the codebase
+- No Drift/SQLite complexity to manage
+- No migrations to worry about
+- File-based storage is trivially portable across platforms
+- Easy to implement export/import (CSV files are already portable)
+- Zero configuration for desktop and web platforms
 
 ### Dependencies
 
-- `drift` (Flutter package)
-- `sqlite` (for desktop)
-- `driftflutter` (for mobile)
-- Code generator for Drift
+- None — pure Dart file I/O
+- `path_provider` for platform-appropriate storage paths
 
 ### Risks
 
-- Medium risk — Drift setup can be tricky, especially for desktop
-- Risk of schema drift if not managed properly
+- Low risk — file I/O is straightforward
+- Low risk — no complex migration strategy needed
+- Low risk — no platform-specific quirks
 
 ### Complexity
 
-Medium
+Low
 
 ### Estimate
 
 | Metric | Value |
 |--------|-------|
-| Story Points | 5 |
-| Ideal Days | 2 |
-| Likely Days | 3 |
-| Worst Case | 5 |
-| Confidence | 75% |
+| Story Points | 3 |
+| Ideal Days | 1 |
+| Likely Days | 1 |
+| Worst Case | 2 |
+| Confidence | 95% |
 
 ---
 
 ### As a contributor  
-I want a configured Drift database layer with schema and connection setup  
-So that I can persist clothing and user data without writing raw SQL.
+I want a simple CSV file storage layer with schema and connection setup  
+So that I can persist clothing and user data without worrying about a database.
 
 #### Description
 
-Set up Drift with:
-1. A base schema file (at least an empty `schema.sql` ready for tables)
+Set up CSV storage with:
+1. A schema file (`packages/database/schema.csv`) that defines all columns for each table
 2. Database connection code that works on iOS, Android, Linux, macOS, and Windows
-3. Migration framework with a v0→v1 stub
+3. Platform-appropriate file paths in the user's application directory
 
 #### Acceptance Criteria
 
 - [ ] `packages/database/` directory exists
 - [ ] `packages/database/lib/database.dart` contains:
-  - [ ] Database connection initialization
-  - [ ] Platform-specific connection logic (mobile vs desktop)
+  - [ ] Platform-agnostic storage path resolution (`DocumentsDirectory`, `ApplicationDocumentsDirectory`)
+  - [ ] `OpenClosetDatabase` class with CRUD methods for items, categories, outfits
+  - [ ] CSV file loading and saving (no SQLite or Drift)
   - [ ] Connection closure on app exit
-- [ ] `packages/database/schema.sql` exists with:
-  - [ ] Header comment explaining schema structure
-  - [ ] Empty table definitions ready for feature teams to add
-- [ ] Drift code generation configured in `pubspec.yaml`
-  - [ ] Build runner targets defined
-  - [ ] Generated code exists (`generated/` directory)
-- [ ] Migration file exists at `packages/database/migrations/001_initial.sql` (empty/stub)
-- [ ] No raw SQL strings exist in the codebase
-- [ ] Database connection is testable (injectable)
+- [ ] `packages/database/schema.csv` exists with:
+  - [ ] Column definitions for all entities (items, categories, outfits, outfit_items)
+  - [ ] Data types for each column
+  - [ ] Header comment explaining the schema structure
+- [ ] No raw SQL or SQLite dependencies in the codebase
+- [ ] Database connection is testable (injectable file path parameter)
+- [ ] All data operations are wrapped in a single abstract storage API
 
 #### Technical Tasks
 
-1. Add `drift`, `driftflutter`, `sqlite` to `pubspec.yaml`
-2. Create `packages/database/schema.sql`
-3. Create database connection code with platform detection
-4. Configure build runner for Drift code generation
-5. Create empty migration file
-6. Create a factory method for creating DB instances (testable)
+1. Add `path_provider` to `pubspec.yaml`
+2. Create `packages/database/schema.csv` with column definitions for:
+   - `categories` (id, name, description)
+   - `items` (id, name, description, category_id, image_uuid, created_at, updated_at)
+   - `outfits` (id, name, description, created_at, updated_at)
+   - `outfit_items` (outfit_id, item_id)
+3. Create platform-aware database connection code in `packages/database/lib/connection/`:
+   - `connection.dart` — platform detection and path resolution
+   - `native.dart` — mobile (iOS, Android) path handling
+   - `desktop.dart` — desktop (Linux, macOS, Windows) path handling
+   - `web.dart` — web path handling
+   - `unsupported.dart` — fallback for unsupported platforms
+4. Create `packages/database/lib/database.dart` with:
+   - `OpenClosetDatabase` class with:
+     - `categories` — CRUD for category table
+     - `items` — CRUD for items table
+     - `outfits` — CRUD for outfits table
+     - `outfit_items` — CRUD for junction table
+     - `create()` method for initial file creation
+     - `save()` method for persisting changes
+     - `close()` method for cleanup
+5. Create empty data files (empty CSVs with headers) on first app launch
+6. Create a factory method for creating DB instances (testable with mock file paths)
 
 #### Tests
 
-- [ ] Unit test: `database_test.dart` — verifies connection creation and closure
-- [ ] Unit test: `migration_test.dart` — verifies v0→v1 migration is empty
-- [ ] Integration test: `db_integration_test.dart` — verifies schema matches code gen output
+- [ ] Unit test: `database_test.dart` — verifies file creation and CRUD operations
+- [ ] Unit test: `path_resolution_test.dart` — verifies correct platform paths
+- [ ] Unit test: `schema_validation_test.dart` — verifies CSV schema matches code
+- [ ] Integration test: `db_integration_test.dart` — verifies full read/write cycle
 
 #### Definition of Done
 
-- `dart run build_runner build` produces generated code
-- Database connection works on at least one platform
-- No SQL errors on schema load
+- Database connection creates/loads CSV files on first run
+- All CRUD operations work on CSV files
+- No SQL or database dependencies in the codebase
 - All tests pass
+- Storage abstraction is testable with mock file paths
 
 ---
 
@@ -788,23 +808,23 @@ Create `lib/.github/workflows/ci.yml` with:
 |-------|--------------|-------|--------|------------|------------|
 | 1. Project Architecture | 5 | 2d | 3d | 5d | 80% |
 | 2. Configure Riverpod | 3 | 1d | 1d | 2d | 90% |
-| 3. Configure Drift | 5 | 2d | 3d | 5d | 75% |
+| 3. Configure CSV Storage | 3 | 1d | 1d | 2d | 95% |
 | 4. Configure Routing | 3 | 1d | 2d | 3d | 85% |
 | 5. Dependency Injection | 3 | 1d | 1d | 2d | 90% |
 | 6. Create App Settings | 5 | 2d | 2d | 3d | 80% |
 | 7. Create Preferences Service | 3 | 1d | 1d | 2d | 85% |
 | 8. GitHub Actions | 3 | 1d | 1d | 2d | 90% |
-| **Total** | **30** | **11d** | **14d** | **23d** | |
+| **Total** | **28** | **10d** | **12d** | **19d** | |
 
 ## Parallelization Strategy
 
 | Phase | Stories | Estimated Duration |
 |-------|---------|-------------------|
 | Phase 1: Foundation | 1, 2, 5 | 3d |
-| Phase 2: Data & Nav | 3, 4 | 3d |
+| Phase 2: Data & Nav | 3, 4 | 2d |
 | Phase 3: Features | 6, 7 | 2d |
 | Phase 4: Automation | 8 | 1d |
-| **Total** | | **9d** (parallel) |
+| **Total** | | **8d** (parallel) |
 
 ## Open-Source Considerations
 
