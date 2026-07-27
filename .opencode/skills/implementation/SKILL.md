@@ -13,6 +13,8 @@ Always follow existing documentation.
 
 Prefer consistency over cleverness.
 
+Always implement a tiny vertical slice and gradually expand with TDD
+
 ---
 
 # Before Coding
@@ -33,15 +35,7 @@ Coding standards
 
 # Coding Principles
 
-SOLID
-
-DRY
-
-KISS
-
-YAGNI
-
-Composition over inheritance
+TDD
 
 Immutability where practical
 
@@ -54,8 +48,6 @@ Prefer
 Riverpod
 
 GoRouter
-
-Drift
 
 Freezed
 
@@ -90,6 +82,8 @@ Accessibility
 ---
 
 # Never
+
+Implement a full layer at once, always thin vertical slices
 
 Duplicate code
 
