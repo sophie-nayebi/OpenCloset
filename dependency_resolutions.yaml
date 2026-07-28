@@ -1,3 +1,15 @@
 packages:
   opencloset_database:
     path: packages/database
+  opencloset_design_system:
+    path: packages/design_system
+  opencloset_import_export:
+    path: packages/import_export
+  opencloset_image_processing:
+    path: packages/image_processing
+  opencloset_statistics:
+    path: packages/statistics
+  opencloset_sync:
+    path: packages/sync
+  opencloset_core:
+    path: packages/core

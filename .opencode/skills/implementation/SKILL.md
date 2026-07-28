@@ -35,7 +35,11 @@ Coding standards
 
 # Coding Principles
 
-TDD
+TDD:
+ - Start with a small test and run it to ensure that it fails
+ - Write the minimal code so that the test passes
+ - Refactor code
+Rinse and repeat. Run tests very often.
 
 Immutability where practical
 
@@ -83,7 +87,7 @@ Accessibility
 
 # Never
 
-Implement a full layer at once, always thin vertical slices
+Implement the full implementation file at once, always thin vertical slices
 
 Duplicate code
 
@@ -96,6 +100,12 @@ Skip documentation
 Hardcode strings
 
 Break architecture
+
+TDD is NOT:
+ - Writing 100+ lines of code at once
+ - Writing more than one test at a time
+ - Writing all of your tests and then all of your implementation
+ - Writing a test and then the implementation without first testing that it fails
 
 ---
 

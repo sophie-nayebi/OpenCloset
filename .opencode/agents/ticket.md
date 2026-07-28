@@ -9,6 +9,7 @@ permission:
     "git log*": allow
   read: deny
   glob: deny
+  grep: deny
   task: allow
 ---
 

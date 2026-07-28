@@ -8,7 +8,7 @@ Read:
 - Relevant specification
 - Existing code
 
-Reuse existing patterns before creating new ones.
+Implement using small testable vertical slices. Avoid implementing a whole class at once as that violates TDD.
 
 This project is hosted on github under user sophie-nayebi and with the name OpenCloset. Work is tracked with github issues available through the github MCP.
 
@@ -20,21 +20,6 @@ For database package, cd into the directory and use:
 ```
 flutter test packages/database/ # To test
 ```
----
-
-
----
-
-## Principles
-
-Prioritize:
-
-1. Simplicity
-2. Readability
-3. Testability
-4. Maintainability
-
-Avoid clever code.
 
 ---
 
@@ -139,6 +124,8 @@ New functionality should include:
 - Integration tests for critical flows
 
 Bug fixes should include regression tests.
+
+ALWAYS use TDD (test driven development)
 
 ---
 
