@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:csv/csv.dart';
 
 /// OpenClosetDatabase - CSV-based data persistence layer
+/// Provides CRUD operations for items, categories, and outfits using CSV files
 class OpenClosetDatabase {
   final String basePath;
   late final File categoriesFile;
@@ -32,14 +32,15 @@ class OpenClosetDatabase {
   }
 
   void _initializeCSVs() {
-    categoriesFile.writeAsStringSync('');
-    itemsFile.writeAsStringSync('');
-    outfitsFile.writeAsStringSync('');
-    outfitItemsFile.writeAsStringSync('');
+    // Write headers to each CSV file
+    categoriesFile.writeAsStringSync('id,name,description,created_at,updated_at\n');
+    itemsFile.writeAsStringSync('id,name,description,category_id,image_uuid,created_at,updated_at\n');
+    outfitsFile.writeAsStringSync('id,name,description,created_at,updated_at\n');
+    outfitItemsFile.writeAsStringSync('outfit_id,item_id\n');
   }
 
   /// === Categories CRUD ===
-  
+
   Future<void> createCategory({
     required String id,
     required String name,
@@ -47,28 +48,25 @@ class OpenClosetDatabase {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) async {
-    final csvString = [
-      id,
-      name,
-      description,
-      createdAt?.toIso8601String() ?? '',
-      updatedAt?.toIso8601String() ?? ''
-    ].join(',');
-    await categoriesFile.writeAsString(csvString, mode: FileMode.append);
-    await categoriesFile.writeAsString('\n', mode: FileMode.append);
+    final line = '$id,$name,$description,'
+        '${createdAt?.toIso8601String() ?? ''},'
+        '${updatedAt?.toIso8601String() ?? ''}\n';
+    await categoriesFile.writeAsString(line, mode: FileMode.append);
   }
 
   Future<List<Map<String, dynamic>>> readAllCategories() async {
     final content = await categoriesFile.readAsString();
-    final lines = content.trim().split('\n').where((line) => line.isNotEmpty);
-    return lines.map((line) {
-      final fields = line.split(',');
+    final lines = content.trim().split('\n');
+    // Skip header row (first line)
+    final dataLines = lines.skip(1).where((line) => line.isNotEmpty).toList();
+    return dataLines.map((line) {
+      final fields = _parseCSVLine(line);
       return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'created_at': fields[3] as String,
-        'updated_at': fields[4] as String,
+        'id': fields[0],
+        'name': fields[1],
+        'description': fields[2],
+        'created_at': fields[3],
+        'updated_at': fields[4],
       };
     }).toList();
   }
@@ -76,19 +74,19 @@ class OpenClosetDatabase {
   Future<Map<String, dynamic>?> readCategoryById(String id) async {
     final content = await categoriesFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      final fields = lines[index].split(',');
-      return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'created_at': fields[3] as String,
-        'updated_at': fields[4] as String,
-      };
+    // Skip header row (first line)
+    final dataLines = lines.skip(1);
+    for (final line in dataLines) {
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        return {
+          'id': fields[0],
+          'name': fields[1],
+          'description': fields[2],
+          'created_at': fields[3],
+          'updated_at': fields[4],
+        };
+      }
     }
     return null;
   }
@@ -102,30 +100,42 @@ class OpenClosetDatabase {
   }) async {
     final content = await categoriesFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      lines[index] = '$id,$name,$description,'
-          '${createdAt?.toIso8601String() ?? ''},'
-          '${updatedAt?.toIso8601String() ?? ''}';
-      await categoriesFile.writeAsString(lines.join('\n'), mode: FileMode.write);
+    bool updated = false;
+    
+    for (int i = 1; i < lines.length; i++) { // Skip header row (start from index 1)
+      final line = lines[i];
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        lines[i] = '$id,$name,$description,'
+            '${createdAt?.toIso8601String() ?? ''},'
+            '${updatedAt?.toIso8601String() ?? ''}\n';
+        updated = true;
+        break;
+      }
+    }
+    
+    if (updated) {
+      // Remove trailing newline from the last line and write back
+      final header = 'id,name,description,created_at,updated_at\n';
+      final updatedLines = lines.join('\n').trim();
+      await categoriesFile.writeAsString('$header$updatedLines', mode: FileMode.write);
     }
   }
 
   Future<void> deleteCategory(String id) async {
     final content = await categoriesFile.readAsString();
     final lines = content.trim().split('\n');
-    final filtered = lines.where((line) {
-      final fields = line.split(',');
+    // Skip header row (first line)
+    final header = 'id,name,description,created_at,updated_at\n';
+    final filtered = lines.skip(1).where((line) {
+      final fields = _parseCSVLine(line);
       return fields[0] != id;
     }).toList();
-    await categoriesFile.writeAsString(filtered.join('\n'), mode: FileMode.write);
+    await categoriesFile.writeAsString('$header${filtered.join('')}', mode: FileMode.write);
   }
 
   /// === Items CRUD ===
-  
+
   Future<void> createItem({
     required String id,
     required String name,
@@ -135,32 +145,29 @@ class OpenClosetDatabase {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) async {
-    final csvString = [
-      id,
-      name,
-      description,
-      categoryId ?? '',
-      imageUuid ?? '',
-      createdAt?.toIso8601String() ?? '',
-      updatedAt?.toIso8601String() ?? ''
-    ].join(',');
-    await itemsFile.writeAsString(csvString, mode: FileMode.append);
-    await itemsFile.writeAsString('\n', mode: FileMode.append);
+    final line = '$id,$name,$description,'
+        '${categoryId ?? ''},'
+        '${imageUuid ?? ''},'
+        '${createdAt?.toIso8601String() ?? ''},'
+        '${updatedAt?.toIso8601String() ?? ''}\n';
+    await itemsFile.writeAsString(line, mode: FileMode.append);
   }
 
   Future<List<Map<String, dynamic>>> readAllItems() async {
     final content = await itemsFile.readAsString();
-    final lines = content.trim().split('\n').where((line) => line.isNotEmpty);
-    return lines.map((line) {
-      final fields = line.split(',');
+    final lines = content.trim().split('\n');
+    // Skip header row (first line)
+    final dataLines = lines.skip(1).where((line) => line.isNotEmpty).toList();
+    return dataLines.map((line) {
+      final fields = _parseCSVLine(line);
       return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'category_id': fields[3] as String,
-        'image_uuid': fields[4] as String,
-        'created_at': fields[5] as String,
-        'updated_at': fields[6] as String,
+        'id': fields[0],
+        'name': fields[1],
+        'description': fields[2],
+        'category_id': fields[3],
+        'image_uuid': fields[4],
+        'created_at': fields[5],
+        'updated_at': fields[6],
       };
     }).toList();
   }
@@ -168,26 +175,26 @@ class OpenClosetDatabase {
   Future<Map<String, dynamic>?> readItemById(String id) async {
     final content = await itemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      final fields = lines[index].split(',');
-      return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'category_id': fields[3] as String,
-        'image_uuid': fields[4] as String,
-        'created_at': fields[5] as String,
-        'updated_at': fields[6] as String,
-      };
+    // Skip header row (first line)
+    final dataLines = lines.skip(1);
+    for (final line in dataLines) {
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        return {
+          'id': fields[0],
+          'name': fields[1],
+          'description': fields[2],
+          'category_id': fields[3],
+          'image_uuid': fields[4],
+          'created_at': fields[5],
+          'updated_at': fields[6],
+        };
+      }
     }
     return null;
   }
 
-  Future<void> updateItem({
+Future<void> updateItem({
     required String id,
     required String name,
     required String description,
@@ -198,32 +205,44 @@ class OpenClosetDatabase {
   }) async {
     final content = await itemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      lines[index] = '$id,$name,$description,'
-          '${categoryId ?? ''},'
-          '${imageUuid ?? ''},'
-          '${createdAt?.toIso8601String() ?? ''},'
-          '${updatedAt?.toIso8601String() ?? ''}';
-      await itemsFile.writeAsString(lines.join('\n'), mode: FileMode.write);
+    bool updated = false;
+    
+    for (int i = 1; i < lines.length; i++) { // Skip header row (start from index 1)
+      final line = lines[i];
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        lines[i] = '$id,$name,$description,'
+            '${categoryId ?? ''},'
+            '${imageUuid ?? ''},'
+            '${createdAt?.toIso8601String() ?? ''},'
+            '${updatedAt?.toIso8601String() ?? ''}\n';
+        updated = true;
+        break;
+      }
+    }
+    
+    if (updated) {
+      // Remove trailing newline from the last line and write back
+      final header = 'id,name,description,category_id,image_uuid,created_at,updated_at\n';
+      final updatedLines = lines.join('\n').trim();
+      await itemsFile.writeAsString('$header$updatedLines', mode: FileMode.write);
     }
   }
 
-  Future<void> deleteItem(String id) async {
+Future<void> deleteItem(String id) async {
     final content = await itemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final filtered = lines.where((line) {
-      final fields = line.split(',');
+    // Skip header row (first line)
+    final header = 'id,name,description,category_id,image_uuid,created_at,updated_at\n';
+    final filtered = lines.skip(1).where((line) {
+      final fields = _parseCSVLine(line);
       return fields[0] != id;
     }).toList();
-    await itemsFile.writeAsString(filtered.join('\n'), mode: FileMode.write);
+    await itemsFile.writeAsString('$header${filtered.join('')}', mode: FileMode.write);
   }
 
   /// === Outfits CRUD ===
-  
+
   Future<void> createOutfit({
     required String id,
     required String name,
@@ -231,28 +250,25 @@ class OpenClosetDatabase {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) async {
-    final csvString = [
-      id,
-      name,
-      description,
-      createdAt?.toIso8601String() ?? '',
-      updatedAt?.toIso8601String() ?? ''
-    ].join(',');
-    await outfitsFile.writeAsString(csvString, mode: FileMode.append);
-    await outfitsFile.writeAsString('\n', mode: FileMode.append);
+    final line = '$id,$name,$description,'
+        '${createdAt?.toIso8601String() ?? ''},'
+        '${updatedAt?.toIso8601String() ?? ''}\n';
+    await outfitsFile.writeAsString(line, mode: FileMode.append);
   }
 
   Future<List<Map<String, dynamic>>> readAllOutfits() async {
     final content = await outfitsFile.readAsString();
-    final lines = content.trim().split('\n').where((line) => line.isNotEmpty);
-    return lines.map((line) {
-      final fields = line.split(',');
+    final lines = content.trim().split('\n');
+    // Skip header row (first line)
+    final dataLines = lines.skip(1).where((line) => line.isNotEmpty).toList();
+    return dataLines.map((line) {
+      final fields = _parseCSVLine(line);
       return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'created_at': fields[3] as String,
-        'updated_at': fields[4] as String,
+        'id': fields[0],
+        'name': fields[1],
+        'description': fields[2],
+        'created_at': fields[3],
+        'updated_at': fields[4],
       };
     }).toList();
   }
@@ -260,24 +276,24 @@ class OpenClosetDatabase {
   Future<Map<String, dynamic>?> readOutfitById(String id) async {
     final content = await outfitsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      final fields = lines[index].split(',');
-      return {
-        'id': fields[0] as String,
-        'name': fields[1] as String,
-        'description': fields[2] as String,
-        'created_at': fields[3] as String,
-        'updated_at': fields[4] as String,
-      };
+    // Skip header row (first line)
+    final dataLines = lines.skip(1);
+    for (final line in dataLines) {
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        return {
+          'id': fields[0],
+          'name': fields[1],
+          'description': fields[2],
+          'created_at': fields[3],
+          'updated_at': fields[4],
+        };
+      }
     }
     return null;
   }
 
-  Future<void> updateOutfit({
+Future<void> updateOutfit({
     required String id,
     required String name,
     required String description,
@@ -286,47 +302,60 @@ class OpenClosetDatabase {
   }) async {
     final content = await outfitsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == id;
-    });
-    if (index != -1) {
-      lines[index] = '$id,$name,$description,'
-          '${createdAt?.toIso8601String() ?? ''},'
-          '${updatedAt?.toIso8601String() ?? ''}';
-      await outfitsFile.writeAsString(lines.join('\n'), mode: FileMode.write);
+    bool updated = false;
+    
+    for (int i = 1; i < lines.length; i++) { // Skip header row (start from index 1)
+      final line = lines[i];
+      final fields = _parseCSVLine(line);
+      if (fields[0] == id) {
+        lines[i] = '$id,$name,$description,'
+            '${createdAt?.toIso8601String() ?? ''},'
+            '${updatedAt?.toIso8601String() ?? ''}\n';
+        updated = true;
+        break;
+      }
+    }
+    
+    if (updated) {
+      // Remove trailing newline from the last line and write back
+      final header = 'id,name,description,created_at,updated_at\n';
+      final updatedLines = lines.join('\n').trim();
+      await outfitsFile.writeAsString('$header$updatedLines', mode: FileMode.write);
     }
   }
 
-  Future<void> deleteOutfit(String id) async {
+Future<void> deleteOutfit(String id) async {
     final content = await outfitsFile.readAsString();
     final lines = content.trim().split('\n');
-    final filtered = lines.where((line) {
-      final fields = line.split(',');
+    // Skip header row (first line)
+    final header = 'id,name,description,created_at,updated_at\n';
+    final filtered = lines.skip(1).where((line) {
+      final fields = _parseCSVLine(line);
       return fields[0] != id;
     }).toList();
-    await outfitsFile.writeAsString(filtered.join('\n'), mode: FileMode.write);
+    await outfitsFile.writeAsString('$header${filtered.join('')}', mode: FileMode.write);
   }
 
   /// === Outfit Items CRUD (Junction Table) ===
-  
+
   Future<void> createOutfitItem({
     required String outfitId,
     required String itemId,
   }) async {
-    final csvString = [outfitId, itemId].join(',');
-    await outfitItemsFile.writeAsString(csvString, mode: FileMode.append);
-    await outfitItemsFile.writeAsString('\n', mode: FileMode.append);
+    final line = '$outfitId,$itemId\n';
+    await outfitItemsFile.writeAsString(line, mode: FileMode.append);
   }
 
   Future<List<Map<String, dynamic>>> readAllOutfitItems() async {
     final content = await outfitItemsFile.readAsString();
-    final lines = content.trim().split('\n').where((line) => line.isNotEmpty);
-    return lines.map((line) {
-      final fields = line.split(',');
+    final lines = content.trim().split('\n');
+    // Skip header row (first line)
+    final dataLines = lines.skip(1).where((line) => line.isNotEmpty).toList();
+    return dataLines.map((line) {
+      final fields = _parseCSVLine(line);
       return {
-        'outfit_id': fields[0] as String,
-        'item_id': fields[1] as String,
+        'outfit_id': fields[0],
+        'item_id': fields[1],
       };
     }).toList();
   }
@@ -334,16 +363,16 @@ class OpenClosetDatabase {
   Future<Map<String, dynamic>?> readOutfitItemByOutfitId(String outfitId) async {
     final content = await outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[0] == outfitId;
-    });
-    if (index != -1) {
-      final fields = lines[index].split(',');
-      return {
-        'outfit_id': fields[0] as String,
-        'item_id': fields[1] as String,
-      };
+    // Skip header row (first line)
+    final dataLines = lines.skip(1);
+    for (final line in dataLines) {
+      final fields = _parseCSVLine(line);
+      if (fields[0] == outfitId) {
+        return {
+          'outfit_id': fields[0],
+          'item_id': fields[1],
+        };
+      }
     }
     return null;
   }
@@ -351,16 +380,16 @@ class OpenClosetDatabase {
   Future<Map<String, dynamic>?> readOutfitItemByItemId(String itemId) async {
     final content = await outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final index = lines.indexWhere((line) {
-      final fields = line.split(',');
-      return fields[1] == itemId;
-    });
-    if (index != -1) {
-      final fields = lines[index].split(',');
-      return {
-        'outfit_id': fields[0] as String,
-        'item_id': fields[1] as String,
-      };
+    // Skip header row (first line)
+    final dataLines = lines.skip(1);
+    for (final line in dataLines) {
+      final fields = _parseCSVLine(line);
+      if (fields[1] == itemId) {
+        return {
+          'outfit_id': fields[0],
+          'item_id': fields[1],
+        };
+      }
     }
     return null;
   }
@@ -368,20 +397,28 @@ class OpenClosetDatabase {
   Future<void> deleteOutfitItem(String outfitId) async {
     final content = await outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
-    final filtered = lines.where((line) {
-      final fields = line.split(',');
+    // Skip header row (first line)
+    final header = 'outfit_id,item_id\n';
+    final filtered = lines.skip(1).where((line) {
+      final fields = _parseCSVLine(line);
       return fields[0] != outfitId;
     }).toList();
-    await outfitItemsFile.writeAsString(filtered.join('\n'), mode: FileMode.write);
+    await outfitItemsFile.writeAsString('$header${filtered.join('')}', mode: FileMode.write);
   }
 
   /// === Utility Methods ===
-  
+
   void save() {
     // CSV files are automatically persisted on disk
   }
 
   void close() {
     // No cleanup needed for file-based storage
+  }
+
+  /// Helper method to parse CSV lines (simple comma-splitting without quotes)
+  List<String> _parseCSVLine(String line) {
+    final parts = line.split(',');
+    return parts.map((p) => p.trim()).toList();
   }
 }

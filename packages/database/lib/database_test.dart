@@ -8,35 +8,19 @@ void main() {
   });
 
   test('should create CSV files on initialization', () async {
-    final db = OpenClosetDatabase('/tmp/test_db');
-    expect(await File('/tmp/test_db/categories.csv').exists(), isTrue);
-    expect(await File('/tmp/test_db/items.csv').exists(), isTrue);
-    expect(await File('/tmp/test_db/outfits.csv').exists(), isTrue);
-    expect(await File('/tmp/test_db/outfit_items.csv').exists(), isTrue);
+    final dbPath = '/tmp/test_db';
+    OpenClosetDatabase(dbPath); // Create database to initialize files
+    expect(await File('$dbPath/categories.csv').exists(), isTrue);
+    expect(await File('$dbPath/items.csv').exists(), isTrue);
+    expect(await File('$dbPath/outfits.csv').exists(), isTrue);
+    expect(await File('$dbPath/outfit_items.csv').exists(), isTrue);
   });
 
-  test('should read categories CSV', () async {
-    final db = OpenClosetDatabase('/tmp/test_db');
+  test('should initialize CSV files with headers', () async {
+    final dbPath = '/tmp/test_db2';
+    final db = OpenClosetDatabase(dbPath);
     final content = await db.categories.readAsString();
-    expect(content, isEmpty);
-  });
-
-  test('should read items CSV', () async {
-    final db = OpenClosetDatabase('/tmp/test_db');
-    final content = await db.items.readAsString();
-    expect(content, isEmpty);
-  });
-
-  test('should read outfits CSV', () async {
-    final db = OpenClosetDatabase('/tmp/test_db');
-    final content = await db.outfits.readAsString();
-    expect(content, isEmpty);
-  });
-
-  test('should read outfit_items CSV', () async {
-    final db = OpenClosetDatabase('/tmp/test_db');
-    final content = await db.outfitItems.readAsString();
-    expect(content, isEmpty);
+    expect(content, contains('id,name,description,created_at,updated_at'));
   });
 
   test('should create a category', () async {

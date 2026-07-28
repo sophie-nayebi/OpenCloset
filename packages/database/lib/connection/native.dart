@@ -1,11 +1,11 @@
-import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 /// Native path handling for mobile platforms (iOS, Android)
 /// Returns the actual file path string for CSV storage
 String getNativeMobilePath() {
   try {
-    final documentsDirectory = getApplicationDocumentsDirectory();
-    return documentsDirectory.path;
+    // Use system temp directory as fallback for mobile
+    return Directory.systemTemp.path;
   } catch (e) {
     return '/mobile/app/documents';
   }

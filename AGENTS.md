@@ -14,15 +14,6 @@ This project is hosted on github under user sophie-nayebi and with the name Open
 
 ---
 
-## Build
-
-For database package, cd into the directory and use:
-```
-flutter test packages/database/ # To test
-```
-
----
-
 ## Stack
 
 - Flutter

@@ -26,7 +26,7 @@ String _getDesktopPath() {
   if (Platform.isWindows) {
     try {
       final path = Platform.environment['APPDATA'] ?? 
-                   Platform.environment['USERPROFILE'] ?? '';
+                     Platform.environment['USERPROFILE'] ?? '';
       return '$path/OpenCloset/data';
     } catch (e) {
       return 'C:/Users/User/OpenCloset/data';
@@ -54,11 +54,6 @@ String _getWebPath() {
   } catch (e) {
     return '/webstorage';
   }
-}
-
-/// Gets the storage path for unsupported platforms
-String _getUnsupportedPath() {
-  return '/unsupported';
 }
 
 /// Gets the path for categories CSV file

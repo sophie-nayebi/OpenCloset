@@ -1,0 +1,28 @@
+# OpenCloset Database Schema
+# This CSV file defines the structure for all data tables
+# Each table is a separate CSV file with headers as the first row
+# Data types: id (UUID), name (string), description (string),
+#             created_at (ISO8601 datetime), updated_at (ISO8601 datetime),
+#             image_uuid (UUID), category_id (UUID - foreign key to categories)
+#
+# Table Structure:
+# - categories: Stores clothing category definitions
+# - items: Stores individual clothing items with references to categories
+# - outfits: Stores outfit definitions
+# - outfit_items: Junction table for many-to-many relationship between outfits and items
+
+# categories table
+# Columns: id (UUID), name (string), description (string), created_at (ISO8601), updated_at (ISO8601)
+id,name,description,created_at,updated_at
+
+# items table
+# Columns: id (UUID), name (string), description (string), category_id (UUID), image_uuid (UUID), created_at (ISO8601), updated_at (ISO8601)
+id,name,description,category_id,image_uuid,created_at,updated_at
+
+# outfits table
+# Columns: id (UUID), name (string), description (string), created_at (ISO8601), updated_at (ISO8601)
+id,name,description,created_at,updated_at
+
+# outfit_items table (many-to-many join between outfits and items)
+# Columns: outfit_id (UUID), item_id (UUID)
+outfit_id,item_id
