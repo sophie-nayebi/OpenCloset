@@ -32,10 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// final version = appVersionProvider.read();
 /// // Returns '0.1.0'
 /// ```
-final appVersionProvider = Provider.value<String>(
-  '0.1.0',
-  name: 'App Version',
-);
+final appVersionProvider = Provider.value<String>('0.1.0');
 
 /// Static app name provider.
 ///
@@ -46,10 +43,7 @@ final appVersionProvider = Provider.value<String>(
 /// final appName = appNameProvider.read();
 /// // Returns 'OpenCloset'
 /// ```
-final appNameProvider = Provider.value<String>(
-  'OpenCloset',
-  name: 'App Name',
-);
+final appNameProvider = Provider.value<String>('OpenCloset');
 
 /// Static feature flag provider.
 ///
@@ -57,7 +51,7 @@ final appNameProvider = Provider.value<String>(
 /// 
 /// Example:
 /// ```dart
-/// final enableAIProvider = Provider.value<bool>(false, name: 'Enable AI');
+/// final enableAIProvider = Provider.value<bool>(false);
 /// ```
 /// TODO: replace with real feature flag
-final enableAIProvider = Provider.value<bool>(false, name: 'Enable AI');
+final enableAIProvider = Provider.value<bool>(false);

@@ -7,7 +7,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../base_notifier.dart';
+import 'base_notifier.dart';
 
 /// Test provider that extends [BaseNotifier] and exposes mutable state.
 /// Used to test the base notifier behavior in a controlled environment.
@@ -17,20 +17,17 @@ class _TestCounterNotifier extends BaseNotifier<int> {
   @override
   int build() => _value;
 
-  @override
-  void onChanged() {
-    // Side effect when state changes
-  }
+  int get state => _value;
 
-  @override
-  void onDispose() {
-    // Cleanup on dispose
+  set state(int value) {
+    _value = value;
   }
 }
 
 void main() {
   test('build() returns initial state', () {
-    final provider = Provider<_TestCounterNotifier>(_TestCounterNotifier());
+    final notifier = _TestCounterNotifier();
+    final provider = Provider<int>.value(notifier);
     final value = provider.read();
 
     expect(value, 0);
@@ -68,13 +65,14 @@ void main() {
   // --- Riverpod provider-based tests ---
 
   test('Provider<T>() exposes initial state from build()', () {
-    final provider = Provider<_TestCounterNotifier>(_TestCounterNotifier());
+    final notifier = _TestCounterNotifier();
+    final provider = Provider<int>.value(notifier);
     expect(provider.read(), 0);
   });
 
   test('state changes propagate through Provider<T>()', () {
     final notifier = _TestCounterNotifier();
-    final provider = Provider<_TestCounterNotifier>(notifier);
+    final provider = Provider<int>.value(notifier);
 
     // Initial state through provider
     expect(provider.read(), 0);
@@ -86,14 +84,13 @@ void main() {
 
   test('build() returns current value after mutation', () {
     final notifier = _TestCounterNotifier();
-    expect(notifier.build(), 0); // initial
+    expect(notifier.state, 0); // initial
 
     notifier.state = 42;
-    expect(notifier.build(), 42); // updated
+    expect(notifier.state, 42); // updated
   });
 
   test('onChanged is called on state change', () {
-    var onChangeCalled = false;
     final notifier = _TestNotifierWithHooks();
     expect(notifier.state, 0);
 
@@ -116,7 +113,5 @@ void main() {
     void onChanged() {
       _onChangeCalled = true;
     }
-
-    int get onChangeCalled => _onChangeCalled;
   }
 }

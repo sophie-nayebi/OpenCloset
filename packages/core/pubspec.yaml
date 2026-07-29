@@ -9,7 +9,7 @@ publish_to: "none"
 repository: https://github.com/sophie-nayebi/OpenCloset/tree/main/packages/core
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.12.0 <4.0.0"
 
 dependencies:
   flutter: { sdk: flutter }
