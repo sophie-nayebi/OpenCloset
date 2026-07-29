@@ -26,7 +26,7 @@ import 'package:opencloset/features/settings/settings_screen.dart';
 ///
 /// This router instance is created with named routes for navigation,
 /// deep linking support, and a fallback 404 handler.
-final router = GoRouter(
+final _router = GoRouter(
   initialLocation: '/',
   routes: [
     // Home route
@@ -48,9 +48,10 @@ final router = GoRouter(
       name: 'notFound',
       path: '*',
       builder: (context, state) => Scaffold(
-        body: const Center(
-          child: Text(
-            '404 — Page Not Found',
+        body: Center(
+          child: Semantics(
+            label: 'Page not found - The requested page does not exist',
+            child: const Text('404 — Page Not Found'),
           ),
         ),
       ),
@@ -59,6 +60,13 @@ final router = GoRouter(
   // Deep linking configuration
   debugLogDiagnostics: true,
 );
+
+/// Routes helper class for accessing the router instance.
+/// This provides a static getter to avoid circular references in tests.
+class routes {
+  /// The router instance for the application.
+  static GoRouter get router => _router;
+}
 
 /// Named route helper for navigation.
 ///

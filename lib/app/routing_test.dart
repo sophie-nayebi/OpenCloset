@@ -62,8 +62,8 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
 
       // Navigate to an unknown path which should trigger 404
-      // Note: The 404 route is wrapped in Semantics which hides the Text from find.text()
-      // So we need to check for the text inside the Semantics widget
+      // Note: The 404 route is wrapped in Semantics which doesn't affect find.text()
+      // The Text is still accessible directly
       router.go('/nonexistent');
       await tester.pumpAndSettle();
 
