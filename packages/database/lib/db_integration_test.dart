@@ -33,7 +33,7 @@ void main() {
       
       final category = await db.readCategoryById('123e4567-e89b-12d3-a456-426614174000');
       expect(category, isNotNull);
-      expect(category?['name'], 'Denim Jacket');
+      expect(category?['name'], equals('Denim Jacket'));
     });
 
     test('should write a new item using CRUD API', () async {
@@ -67,7 +67,7 @@ void main() {
       
       final item = await db.readItemById('123e4567-e89b-12d3-a456-426614174000');
       expect(item, isNotNull);
-      expect(item?['name'], 'T-Shirt');
+      expect(item?['name'], equals('T-Shirt'));
     });
 
     test('should write a new outfit using CRUD API', () async {
@@ -93,7 +93,7 @@ void main() {
       
       final outfit = await db.readOutfitById('123e4567-e89b-12d3-a456-426614174000');
       expect(outfit, isNotNull);
-      expect(outfit?['name'], 'Summer Outfit');
+      expect(outfit?['name'], equals('Summer Outfit'));
     });
 
     test('should write an outfit_item relationship using CRUD API', () async {
@@ -115,9 +115,9 @@ void main() {
         itemId: '123e4567-e89b-12d3-a456-426614174000',
       );
       
-      final outfitItem = await db.readOutfitItemByOutfitId('123e4567-e89b-12d3-a456-426614174000');
-      expect(outfitItem, isNotNull);
-      expect(outfitItem?['item_id'], '123e4567-e89b-12d3-a456-426614174000');
+      final outfitItems = await db.readOutfitItemByOutfitId('123e4567-e89b-12d3-a456-426614174000');
+      expect(outfitItems, isNotEmpty);
+      expect(outfitItems.first['item_id'], equals('123e4567-e89b-12d3-a456-426614174000'));
     });
   });
 }
