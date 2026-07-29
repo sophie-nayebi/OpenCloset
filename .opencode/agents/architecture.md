@@ -1,6 +1,7 @@
 ---
 description: Senior Software Architect. Produces architecture documents, ADRs, technology evaluations, data models, deployment strategies, diagrams, and scalability analyses.
 mode: subagent
+model: llamacpp/bonsai-27B-GGUF
 permission:
   edit: deny
   bash:

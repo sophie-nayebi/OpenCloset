@@ -1,6 +1,7 @@
 ---
 description: Orchestrator, ensures the whole development flow of a single issue gets executed correctly
 mode: primary
+model: llamacpp/Qwen3.5-9B-GGUF
 permission:
   edit: deny
   bash: deny
