@@ -13,7 +13,6 @@
 /// ```
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 /// The light theme for the application.
 final lightTheme = ThemeData(
@@ -27,11 +26,10 @@ final lightTheme = ThemeData(
 /// The dark theme for the application.
 final darkTheme = ThemeData(
   useMaterial3: true,
- colorScheme: ColorScheme.fromSeed(
+  colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.purple,
-    brightness: Brightness.light,
+    brightness: Brightness.dark,
   ),
-  debugLogDiagnostics: kDebug,
 );
 
 /// Application color scheme.

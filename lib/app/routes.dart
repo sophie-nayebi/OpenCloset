@@ -58,6 +58,9 @@ final _router = GoRouter(
     ),
   ],
   // Deep linking configuration
+  // TODO: Implement deep linking handler stub to handle deep links
+  // See issue: "Deep linking stub (currently no handlers)"
+  // The handler stub will be added here once deep linking is implemented
   debugLogDiagnostics: true,
 );
 
