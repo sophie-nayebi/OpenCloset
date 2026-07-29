@@ -1,0 +1,18 @@
+# OpenCloset Database Schema
+# This file documents the structure of CSV files used for data persistence
+
+# categories table
+# Stores clothing categories
+id,name,description,created_at,updated_at
+
+# items table
+# Stores clothing items
+id,name,description,category_id,image_uuid,created_at,updated_at
+
+# outfits table
+# Stores outfit combinations
+id,name,description,created_at,updated_at
+
+# outfit_items table
+# Junction table for outfit-items relationship
+outfit_id,item_id

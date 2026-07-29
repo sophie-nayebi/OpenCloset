@@ -1,0 +1,18 @@
+# OpenCloset Database Schema
+# This CSV file defines the structure for all data tables
+# Each table is a separate CSV file with headers as the first row
+# Data types: id (UUID), name (string), description (string), 
+#             created_at (ISO8601 datetime), updated_at (ISO8601 datetime),
+#             image_uuid (UUID), category_id (UUID - foreign key to categories)
+
+# categories table
+id,name,description,created_at,updated_at
+
+# items table
+id,name,description,category_id,image_uuid,created_at,updated_at
+
+# outfits table
+id,name,description,created_at,updated_at
+
+# outfit_items table (many-to-many join between outfits and items)
+outfit_id,item_id

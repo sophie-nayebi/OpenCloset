@@ -8,20 +8,9 @@ Read:
 - Relevant specification
 - Existing code
 
-Reuse existing patterns before creating new ones.
+Implement using small testable vertical slices. Avoid implementing a whole class at once as that violates TDD.
 
----
-
-## Principles
-
-Prioritize:
-
-1. Simplicity
-2. Readability
-3. Testability
-4. Maintainability
-
-Avoid clever code.
+This project is hosted on github under user sophie-nayebi and with the name OpenCloset. Work is tracked with github issues available through the github MCP.
 
 ---
 
@@ -30,7 +19,6 @@ Avoid clever code.
 - Flutter
 - Dart
 - Riverpod
-- Drift
 - GoRouter
 - Material 3
 
@@ -92,26 +80,13 @@ Application state belongs in providers.
 
 ## Database
 
-Use Drift.
+Use CSV file storage.
 
 Store metadata only.
 
 Images remain on disk.
 
-Avoid raw SQL.
-
----
-
-## Images
-
-Store:
-
-- Original
-- Transparent PNG
-- Mask
-- Thumbnail
-
-Reference them by UUID.
+No SQL or external database dependencies.
 
 ---
 
@@ -131,22 +106,6 @@ Support accessibility.
 
 ---
 
-## Code Style
-
-Small files.
-
-Small widgets.
-
-Small functions.
-
-Prefer composition.
-
-Prefer immutable models.
-
-Document public APIs.
-
----
-
 ## Testing
 
 New functionality should include:
@@ -157,15 +116,7 @@ New functionality should include:
 
 Bug fixes should include regression tests.
 
----
-
-## Security
-
-Validate imported data.
-
-Never trust archive contents.
-
-Never upload user images without explicit user action.
+ALWAYS use TDD (test driven development)
 
 ---
 

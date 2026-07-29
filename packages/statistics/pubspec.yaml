@@ -12,8 +12,9 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  flutter: { sdk: flutter }
-  charts: ^2.5.2
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
-  flutter_test: { sdk: flutter }
+  flutter_test:
+    sdk: flutter

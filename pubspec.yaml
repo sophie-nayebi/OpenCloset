@@ -1,14 +1,14 @@
 name: opencloset
 description: A wardrobe and outfit management application built with Flutter.
-version: 0.0.1
+
 license: MIT
-
-publish_to: "none"
-
 repository: https://github.com/sophie-nayebi/OpenCloset
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
+
+resolutions:
+  dependency_resolutions: dependency_resolutions.yaml
 
 dependencies:
   flutter:
@@ -16,11 +16,22 @@ dependencies:
   go_router: ^14.2.0
   flutter_riverpod: ^2.5.0
   riverpod: ^2.5.0
-  drift: ^2.23.0
-  drift_flutter_extensions: ^2.23.0
   path_provider: ^2.1.2
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  build_runner: ^2.15.1
+  test: ^1.22.0
+  matcher: ^0.12.19
+  # Local packages
+  opencloset_database: { path: packages/database }
+  opencloset_core: { path: packages/core }
+  opencloset_image_processing: { path: packages/image_processing }
+  opencloset_design_system: { path: packages/design_system }
+  opencloset_import_export: { path: packages/import_export }
+  opencloset_statistics: { path: packages/statistics }
+  opencloset_sync: { path: packages/sync }
