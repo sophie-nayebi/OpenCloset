@@ -72,11 +72,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 ///   }
 /// }
 /// ```
-class BaseNotifier<T> extends Notifier<T> {
+abstract class BaseNotifier<T> extends Notifier<T> {
   /// Override this method to return the current state.
   ///
   /// This is the core method that determines the provider's value.
   /// The returned value becomes the provider's `state`.
   @override
-  T build();
+  abstract T build();
 }

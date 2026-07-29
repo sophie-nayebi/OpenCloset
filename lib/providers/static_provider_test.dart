@@ -3,9 +3,8 @@
 /// Tests verify that static providers return immutable values that
 /// never change at runtime.
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../static_provider.dart';
+import 'static_provider.dart';
 
 void main() {
   test('static provider returns immutable value', () {
