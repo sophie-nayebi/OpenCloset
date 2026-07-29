@@ -1,6 +1,7 @@
 ---
 description: Senior Product Owner and Engineering Manager. Creates implementation-ready roadmaps, product analyses, epics, feature decomposition, user stories, project plans, estimates, and release plans.
 mode: subagent
+model: llamacpp/bonsai-27B-GGUF
 permission:
   edit: deny
   bash:

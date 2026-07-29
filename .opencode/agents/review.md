@@ -1,6 +1,7 @@
 ---
 description: Performs comprehensive code and architecture reviews, identifying defects, maintainability issues, performance concerns, security risks, and opportunities for improvement.
 mode: subagent
+model: llamacpp/bonsai-27B-GGUF
 permission:
   edit: deny
   bash:

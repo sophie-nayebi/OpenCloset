@@ -1,6 +1,7 @@
 ---
 description: Implements software according to existing specifications while following architecture and project conventions.
 mode: subagent
+model: llamacpp/Qwen3.5-9B-GGUF
 permission:
   edit: allow
   bash: allow
