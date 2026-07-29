@@ -18,6 +18,8 @@ Prefer consistency over cleverness.
 
 Always implement a tiny vertical slice and gradually expand with TDD
 
+Commit and push when you're done.
+
 ---
 
 # Before Coding
