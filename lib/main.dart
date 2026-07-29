@@ -13,6 +13,7 @@
 
 /// Import app configuration and entry point.
 export 'app/app.dart';
+export 'app/bootstrap.dart';
 export 'app/routes.dart';
 export 'app/theme.dart';
 
