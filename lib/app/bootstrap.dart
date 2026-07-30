@@ -24,7 +24,7 @@
 /// import 'package:opencloset/app/bootstrap.dart';
 ///
 /// // Access providers through the container
-/// final theme = themeProvider.read();
+/// final theme = themeProvider.read(); // Returns AppThemeState
 ///
 /// // Or use watch in a ConsumerWidget:
 /// ConsumerWidget(
@@ -33,23 +33,121 @@
 ///     // ...
 ///   },
 /// );
-/// ```
 ///
-/// ## Architecture
+/// // Toggle theme at runtime:
+/// ref.read(themeProvider).toggleTheme();
 ///
-/// ```
-/// lib/app/
-/// ├── bootstrap.dart          (this file - provider registration)
-/// ├── app.dart                (MaterialApp configuration)
-/// └── theme.dart              (Theme data definitions)
+/// // Set specific theme mode:
+/// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
 /// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// The theme notifier that manages application theme state.
+///
+/// This class extends [StateNotifier] to support runtime theme changes.
+/// It provides methods to toggle theme mode and set the theme mode.
+///
+/// ## Usage
+///
+/// ```dart
+/// // In a ConsumerWidget:
+/// ConsumerWidget(
+///   builder: (context, ref) {
+///     final theme = ref.watch(themeProvider);
+///     // theme changes when toggleTheme() or setThemeMode() is called
+///   },
+/// );
+///
+/// // Toggle theme at runtime:
+/// ref.read(themeProvider).toggleTheme();
+///
+/// // Set specific theme mode:
+/// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
+/// ```
+class AppThemeNotifier extends StateNotifier<AppThemeState> {
+  /// Creates a new [AppThemeNotifier] instance.
+  ///
+  /// [lightScheme] is the light color scheme.
+  /// [darkScheme] is the dark color scheme.
+  AppThemeNotifier({
+    required this.lightScheme,
+    required this.darkScheme,
+  })  : super(
+         AppThemeState(
+           isDark: WidgetsBinding.instance
+               .platformDispatcher.platformBrightness == Brightness.dark,
+           colorScheme: ColorScheme.fromSeed(
+               seedColor: const Color(0xFF6750A4),
+               brightness:
+                   WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark
+                   ? Brightness.dark
+                   : Brightness.light),
+           themeMode: ThemeMode.system,
+           lightScheme: lightScheme,
+           darkScheme: darkScheme,
+         ),
+       );
+
+  /// The light color scheme.
+  final ColorScheme lightScheme;
+
+  /// The dark color scheme.
+  final ColorScheme darkScheme;
+
+  /// Whether dark theme is currently active.
+  bool get isDark => state.isDark;
+
+  /// The current theme mode (system, light, or dark).
+  ThemeMode get themeMode => state.themeMode;
+
+  /// Toggles the theme mode between light and dark.
+  ///
+  /// If currently in light mode, switches to dark.
+  /// If currently in dark mode, switches to light.
+  /// Theme mode remains unchanged.
+  void toggleTheme() {
+    state = AppThemeState(
+      isDark: !state.isDark,
+      colorScheme: _createColorScheme(!state.isDark),
+      themeMode: state.themeMode,
+      lightScheme: lightScheme,
+      darkScheme: darkScheme,
+    );
+  }
+
+  /// Sets the theme mode to the specified value.
+  ///
+  /// Updates the theme mode and recalculates the color scheme accordingly.
+  ///
+  /// ## Parameters
+  ///
+  /// - [mode]: The new theme mode (system, light, or dark)
+  void setThemeMode(ThemeMode mode) {
+    final isDark = mode == ThemeMode.dark;
+    state = AppThemeState(
+      isDark: isDark,
+      colorScheme: _createColorScheme(isDark),
+      themeMode: mode,
+      lightScheme: lightScheme,
+      darkScheme: darkScheme,
+    );
+  }
+
+  /// Creates a color scheme based on the brightness.
+  ColorScheme _createColorScheme(bool isDark) {
+    return ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6750A4),
+      brightness: isDark ? Brightness.dark : Brightness.light,
+    );
+  }
+}
+
 /// The main theme provider that manages application theme state.
 ///
-/// This provider is responsible for:
+/// This provider uses the [StateNotifier] pattern to support runtime theme changes.
+/// It is responsible for:
 /// - Initializing the theme with system preference
 /// - Managing theme mode changes
 /// - Providing the current color scheme
@@ -57,8 +155,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// ## Usage
 ///
 /// ```dart
-/// final theme = themeProvider;
-/// theme.read(); // Returns AppThemeState
+/// import 'package:opencloset/app/bootstrap.dart';
+///
+/// // Access providers through the container
+/// final theme = themeProvider.read(); // Returns AppThemeState
 ///
 /// // Or use watch in a ConsumerWidget:
 /// ConsumerWidget(
@@ -67,15 +167,46 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 ///     // ...
 ///   },
 /// );
+///
+/// // Toggle theme at runtime:
+/// ref.read(themeProvider).toggleTheme();
+///
+/// // Set specific theme mode:
+/// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
 /// ```
-final themeProvider = Provider<AppThemeState>((ref) {
-  return _createThemeState();
+final themeProvider = Provider<AppThemeNotifier>((ref) {
+  return AppThemeNotifier(
+    lightScheme: ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6750A4),
+      brightness: Brightness.light,
+    ),
+    darkScheme: ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6750A4),
+      brightness: Brightness.dark,
+    ),
+  );
 });
 
 /// Theme state class that holds the current theme configuration.
 ///
 /// This class encapsulates all theme-related state and provides a clean API
 /// for accessing theme properties.
+///
+/// ## Properties
+///
+/// - [isDark]: Whether dark theme is currently active
+/// - [colorScheme]: The current color scheme for the application
+/// - [lightScheme]: The light color scheme
+/// - [darkScheme]: The dark color scheme
+/// - [themeMode]: The current theme mode (system, light, or dark)
+///
+/// ## Usage
+///
+/// ```dart
+/// final theme = ref.watch(themeProvider);
+/// theme.isDark; // true or false
+/// theme.themeMode; // ThemeMode.light, ThemeMode.dark, or ThemeMode.system
+/// ```
 class AppThemeState {
   /// Creates a new [AppThemeState] instance.
   ///
@@ -104,46 +235,15 @@ class AppThemeState {
 
   /// The current theme mode (system, light, or dark).
   final ThemeMode themeMode;
-}
 
-/// Creates the initial theme state.
-///
-/// This function creates the initial theme state with the system default brightness.
-///
-/// ## Returns
-///
-/// An [AppThemeState] instance with:
-/// - Default theme mode (system)
-/// - Color scheme based on system brightness
-AppThemeState _createThemeState() {
-  // Use system theme preference by default
-  final isDark = WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark;
-  final colorScheme = _createColorScheme(isDark);
-  final lightScheme = ColorScheme.fromSeed(
-    seedColor: Colors.purple,
-    brightness: Brightness.light,
-  );
-  final darkScheme = ColorScheme.fromSeed(
-    seedColor: Colors.purple,
-    brightness: Brightness.dark,
-  );
-  final themeMode = ThemeMode.system;
-
-  return AppThemeState(
-    isDark: isDark,
-    colorScheme: colorScheme,
-    lightScheme: lightScheme,
-    darkScheme: darkScheme,
-    themeMode: themeMode,
-  );
-}
-
-/// Creates a color scheme based on the brightness.
-ColorScheme _createColorScheme(bool isDark) {
-  return ColorScheme.fromSeed(
-    seedColor: Colors.purple,
-    brightness: isDark ? Brightness.dark : Brightness.light,
-  );
+  /// Creates the appropriate color scheme based on the theme mode.
+  ColorScheme get effectiveColorScheme =>
+      themeMode == ThemeMode.system
+          ? ColorScheme.fromSeed(
+               seedColor: const Color(0xFF6750A4),
+               brightness: Brightness.light,
+             )
+          : (themeMode == ThemeMode.dark ? darkScheme : lightScheme);
 }
 
 /// User preferences stub provider.

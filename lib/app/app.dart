@@ -37,6 +37,17 @@ import 'package:opencloset/app/routes.dart';
 /// ProviderScope (implicit in flutter_riverpod)
 /// └── themeProvider
 /// ```
+///
+/// ## Theme Usage
+///
+/// The [themeProvider] uses the [StateNotifier] pattern to support
+/// runtime theme changes. You can toggle the theme or set a specific
+/// theme mode using:
+///
+/// ```dart
+/// ref.read(themeProvider).toggleTheme();
+/// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
+/// ```
 class MyApp extends ConsumerWidget {
   /// Creates a new MyApp instance.
   const MyApp({super.key});

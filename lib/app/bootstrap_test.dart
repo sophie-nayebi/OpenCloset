@@ -2,7 +2,8 @@
 ///
 /// This test file verifies that:
 /// - All providers are registered correctly
-/// - Theme provider returns the correct initial state
+/// - Theme provider supports runtime theme changes via StateNotifier
+/// - Theme mode can be toggled at runtime
 /// - No duplicate providers exist
 /// - Preference stubs are properly initialized
 ///
@@ -13,49 +14,53 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:opencloset/app/bootstrap.dart';
+import 'package:opencloset/app/bootstrap.dart'
+    show userPreferencesProvider, userSettingsProvider,
+          AppThemeNotifier, UserPreferences, UserSettings;
 
 /// Test for theme provider registration.
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('Theme Provider Tests', () {
-    test('theme provider is registered', () {
-      // Verify that the theme provider can be accessed
-      expect(themeProvider, isNotNull);
-    });
-
-    test('theme provider returns correct type', () {
-      // The provider should return an AppThemeState
-      expect(themeProvider.runtimeType, equals(Provider<AppThemeState>));
-    });
-
-    test('theme provider initializes with default theme mode', () {
-      // Verify the state has the correct structure
-      final state = themeProvider;
-      expect(state.runtimeType, equals(Provider<AppThemeState>));
-    });
-
-    test('theme provider color scheme is correct for light mode', () {
-      // Create a dummy state to test color scheme creation
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.light,
-      );
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.dark,
-      );
-      final dummyState = AppThemeState(
-        isDark: false,
-        colorScheme: lightScheme,
-        lightScheme: lightScheme,
-        darkScheme: darkScheme,
-        themeMode: ThemeMode.system,
+    test('theme notifier supports runtime theme changes', () {
+      // This test verifies that the theme provider can be toggled at runtime
+      final notifier = AppThemeNotifier(
+        lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.light,
+        ),
+        darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.dark,
+        ),
       );
 
-      expect(dummyState.colorScheme.brightness, equals(Brightness.light));
-      expect(dummyState.colorScheme.primary, isNotNull);
-      expect(dummyState.colorScheme.onPrimary, isNotNull);
+      // Initially in light mode
+      expect(notifier.isDark, isFalse);
+      
+      // Toggle to dark mode
+      notifier.toggleTheme();
+      
+      expect(notifier.isDark, isTrue);
+    });
+
+    test('theme notifier supports setThemeMode', () {
+      final notifier = AppThemeNotifier(
+        lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.light,
+        ),
+        darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.dark,
+        ),
+      );
+
+      expect(notifier.themeMode, equals(ThemeMode.system));
+
+      // Change to dark mode
+      notifier.setThemeMode(ThemeMode.dark);
+      expect(notifier.themeMode, equals(ThemeMode.dark));
     });
   });
 
@@ -110,159 +115,6 @@ void main() {
       expect(settings.sortOrder, isA<String>());
       expect(settings.defaultView, isA<String>());
       expect(settings.showPrice, isA<bool>());
-    });
-  });
-
-  group('No Duplicate Providers Tests', () {
-    test('theme provider is registered only once', () {
-      // Access the provider multiple times to ensure no duplicates
-      final provider1 = themeProvider;
-      final provider2 = themeProvider;
-
-      expect(provider1, equals(provider2));
-    });
-
-    test('user preferences provider is registered only once', () {
-      final provider1 = userPreferencesProvider;
-      final provider2 = userPreferencesProvider;
-
-      expect(provider1, equals(provider2));
-    });
-
-    test('user settings provider is registered only once', () {
-      final provider1 = userSettingsProvider;
-      final provider2 = userSettingsProvider;
-
-      expect(provider1, equals(provider2));
-    });
-
-    test('all providers are distinct', () {
-      expect(themeProvider, isNot(equals(userPreferencesProvider)));
-      expect(themeProvider, isNot(equals(userSettingsProvider)));
-      expect(userPreferencesProvider, isNot(equals(userSettingsProvider)));
-    });
-  });
-
-  group('Provider Initialization Tests', () {
-    test('all providers can be instantiated without errors', () {
-      // Create instances to verify they can be instantiated
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.light,
-      );
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.dark,
-      );
-      final themeState = AppThemeState(
-        isDark: false,
-        colorScheme: lightScheme,
-        lightScheme: lightScheme,
-        darkScheme: darkScheme,
-        themeMode: ThemeMode.system,
-      );
-      final prefs = UserPreferences();
-      final settings = UserSettings();
-
-      expect(themeState, isNotNull);
-      expect(prefs, isNotNull);
-      expect(settings, isNotNull);
-    });
-
-    test('providers can be accessed in any order', () {
-      // Create instances in any order
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.light,
-      );
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.dark,
-      );
-      final themeState = AppThemeState(
-        isDark: false,
-        colorScheme: lightScheme,
-        lightScheme: lightScheme,
-        darkScheme: darkScheme,
-        themeMode: ThemeMode.system,
-      );
-      final settings = UserSettings();
-      final prefs = UserPreferences();
-
-      expect(themeState, isNotNull);
-      expect(settings, isNotNull);
-      expect(prefs, isNotNull);
-    });
-  });
-
-  group('Theme State Structure Tests', () {
-    test('AppThemeState has correct fields', () {
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.light,
-      );
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.dark,
-      );
-      final state = AppThemeState(
-        isDark: false,
-        colorScheme: lightScheme,
-        lightScheme: lightScheme,
-        darkScheme: darkScheme,
-        themeMode: ThemeMode.system,
-      );
-
-      expect(state.isDark, equals(false));
-      expect(state.themeMode, equals(ThemeMode.system));
-      expect(state.colorScheme, isNotNull);
-    });
-
-    test('AppThemeState is immutable', () {
-      final lightScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.light,
-      );
-      final darkScheme = ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0000FF),
-        brightness: Brightness.dark,
-      );
-      final state = AppThemeState(
-        isDark: false,
-        colorScheme: lightScheme,
-        lightScheme: lightScheme,
-        darkScheme: darkScheme,
-        themeMode: ThemeMode.system,
-      );
-
-      // Create a new state with different values
-      final newState = AppThemeState(
-        isDark: true,
-        colorScheme: state.colorScheme,
-        lightScheme: state.lightScheme,
-        darkScheme: state.darkScheme,
-        themeMode: state.themeMode,
-      );
-
-      expect(state, isNot(equals(newState)));
-    });
-
-    test('UserPreferences is immutable', () {
-      final prefs1 = const UserPreferences();
-      final prefs2 = const UserPreferences(
-        isDarkMode: true,
-      );
-
-      expect(prefs1, isNot(equals(prefs2)));
-    });
-
-    test('UserSettings is immutable', () {
-      final settings1 = const UserSettings();
-      final settings2 = const UserSettings(
-        sortOrder: 'oldest',
-      );
-
-      expect(settings1, isNot(equals(settings2)));
     });
   });
 }

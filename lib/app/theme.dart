@@ -14,35 +14,21 @@
 
 import 'package:flutter/material.dart';
 
-/// The light theme for the application.
-final lightTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.purple,
-    brightness: Brightness.light,
-  ),
-);
-
-/// The dark theme for the application.
-final darkTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.purple,
-    brightness: Brightness.dark,
-  ),
-);
-
 /// Application color scheme.
+///
+/// This class provides the default color schemes for the application.
+/// The actual color scheme instances are defined in bootstrap.dart to avoid
+/// duplication and ensure consistent color usage.
 class AppColorScheme {
   /// Light color scheme.
   static final light = ColorScheme.fromSeed(
-    seedColor: Colors.purple,
+    seedColor: const Color(0xFF6750A4),
     brightness: Brightness.light,
   );
 
   /// Dark color scheme.
   static final dark = ColorScheme.fromSeed(
-    seedColor: Colors.purple,
+    seedColor: const Color(0xFF6750A4),
     brightness: Brightness.dark,
   );
 }
