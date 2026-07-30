@@ -1,17 +1,7 @@
-/// Home screen widget.
-///
-/// This is the main landing page of the application.
-///
-/// Usage:
-/// ```dart
-/// import 'package:opencloset/features/home/home_screen.dart';
-///
-/// const homeScreen = HomeScreen();
-/// ```
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:opencloset/app/bootstrap.dart';
+import 'package:opencloset/features/settings/settings_screen.dart';
 
 /// The home screen widget.
 ///
@@ -66,7 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.closet, size: 80, color: Colors.grey),
+              const Icon(Icons.folder, size: 80, color: Colors.grey),
               const SizedBox(height: 16),
               const Text(
                 'Welcome to OpenCloset',
