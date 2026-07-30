@@ -13,12 +13,16 @@
 /// // Navigate to settings
 /// context.goNamed('settings');
 ///
+/// // Navigate to article
+/// context.go('/article/test-article');
+///
 /// // Navigate with deep linking
 /// context.go('/wardrobe/items/123');
 /// ```
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:opencloset/features/article/article.dart';
 import 'package:opencloset/features/home/home.dart';
 import 'package:opencloset/features/settings/settings_screen.dart';
 
@@ -41,6 +45,34 @@ final _router = GoRouter(
       name: 'settings',
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+
+    // Article route - dynamic path parameter
+    GoRoute(
+      name: 'article',
+      path: '/article/:articleId',
+      builder: (context, state) {
+        // Parse the article ID from the path parameters
+        final articleId = state.pathParameters['articleId'] ?? '';
+        
+        // For demo/testing, create a mock article
+        // In production, this would fetch from a provider
+        final article = Article(
+          id: articleId,
+          title: 'Article Title',
+          subtitle: 'Article subtitle',
+          content: 'Article content',
+          images: [
+            'https://picsum.photos/seed/${articleId}/800/600',
+            'https://picsum.photos/seed/${articleId}/800/600',
+            'https://picsum.photos/seed/${articleId}/800/600',
+          ],
+          publishedAt: DateTime.now(),
+          category: 'Fashion',
+        );
+
+        return ArticlePage(article: article);
+      },
     ),
 
     // Fallback route - handles unknown routes with 404
@@ -84,4 +116,12 @@ class GoRouterNamed {
 
   /// Navigate to the settings screen.
   static String get settings => '/settings';
+
+  /// Navigate to an article by ID.
+  ///
+  /// Use this to navigate to a specific article:
+  /// ```dart
+  /// context.goNamed('article', pathParameters: {'articleId': '123'});
+  /// ```
+  static String get article => '/article/:articleId';
 }
