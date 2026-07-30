@@ -83,10 +83,12 @@ void main() {
       darkScheme: darkScheme,
     );
 
-    // Verify that getters not return null color schemes
-    expect(notifier.lightScheme, isNotNull);
-    expect(notifier.darkScheme, isNotNull);
-  });
+    expect(notifier.lightScheme, same(lightScheme));
+    expect(notifier.darkScheme, same(darkScheme));
+
+    notifier.toggleTheme();
+    expect(notifier.lightScheme, same(lightScheme));
+    expect(notifier.darkScheme, same(darkScheme));
 
   test('theme notifier disposes correctly without throwing', () {
     final notifier = AppThemeNotifier(
