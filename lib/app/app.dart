@@ -12,24 +12,57 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:opencloset/app/bootstrap.dart';
 import 'package:opencloset/app/routes.dart';
-import 'package:opencloset/app/theme.dart';
 
 /// The main application widget.
 ///
 /// This widget is the root of the application and configures
 /// the GoRouter for navigation and theming.
-class MyApp extends StatelessWidget {
+///
+/// The widget uses the [themeProvider] from bootstrap.dart which handles
+/// lazy-loaded theme initialization.
+///
+/// ## Provider Registration
+///
+/// The following providers are registered through the bootstrap module:
+/// - [themeProvider]: Theme state management (lazy-loaded)
+/// - [userPreferencesProvider]: User preferences stub (lazy-loaded)
+/// - [userSettingsProvider]: User settings stub (lazy-loaded)
+///
+/// ## Provider Hierarchy
+///
+/// ```
+/// ProviderScope (implicit in flutter_riverpod)
+/// └── themeProvider
+/// ```
+///
+/// ## Theme Usage
+///
+/// The [themeProvider] uses the [StateNotifier] pattern to support
+/// runtime theme changes. You can toggle the theme or set a specific
+/// theme mode using:
+///
+/// ```dart
+/// ref.read(themeProvider).toggleTheme();
+/// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
+/// ```
+class MyApp extends ConsumerWidget {
   /// Creates a new MyApp instance.
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Access theme provider through ref (lazy-loaded)
+    final theme = ref.watch(themeProvider);
+
     return MaterialApp.router(
       title: 'OpenCloset',
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      // Use the theme from the provider
+      theme: ThemeData(colorScheme: theme.lightScheme),
+      darkTheme: ThemeData(colorScheme: theme.darkScheme),
+      themeMode: theme.themeMode,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [
         Locale('en', ''),
