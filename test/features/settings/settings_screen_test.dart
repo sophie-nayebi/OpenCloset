@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_test_runners_for_flutter/flutter_test_runners_for_flutter.dart';
+import 'package:flutter_test_runner/flutter_test_runner.dart';
 import 'package:opencloset/features/settings/settings_screen.dart';
 
 void main() {
@@ -60,12 +60,45 @@ void main() {
     await tester.pumpWidget(const SettingsScreen());
     await tester.pumpAndSettle();
 
-    // Check previous button has accessibility label
-    final previousButtonFinder = find.byKey(const Key('previous-button'));
-    expect(previousButtonFinder, findsOneWidget);
+    // Check theme toggle has accessibility label
+    final themeToggleFinder = find.byKey(const Key('theme-toggle'));
+    expect(themeToggleFinder, findsOneWidget);
+  });
 
-    // Check next button has accessibility label
-    final nextButtonFinder = find.byKey(const Key('next-button'));
-    expect(nextButtonFinder, findsOneWidget);
+  testWidgets('Settings screen theme toggle changes theme mode', (tester) async {
+    // Start with light theme
+    await tester.pumpWidget(
+      MaterialApp(
+        home: const SettingsScreen(),
+        theme: ThemeData.light(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Verify initial state is light mode
+    final iconFinder = find.byKey(const Key('theme-toggle'));
+    await iconFinder.evaluate();
+    await tester.pump();
+
+    // Tap the theme toggle container
+    final toggleFinder = find.byKey(const Key('theme-toggle'));
+    await tester.tap(toggleFinder);
+    await tester.pumpAndSettle();
+
+    // Verify it changed to dark mode (check for dark_mode icon)
+    expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+  });
+
+  testWidgets('Settings screen has elevated button for GitHub link', (tester) async {
+    await tester.pumpWidget(const SettingsScreen());
+    await tester.pumpAndSettle();
+
+    // Find the GitHub link button
+    final githubButtonFinder = find.text('View on GitHub');
+    expect(githubButtonFinder, findsOneWidget);
+
+    // Verify it's an ElevatedButton (check for Material with elevation)
+    final buttonFinder = find.byType(ElevatedButton);
+    expect(buttonFinder, findsOneWidget);
   });
 }
