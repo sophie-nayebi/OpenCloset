@@ -15,11 +15,11 @@ class SettingsScreen extends ConsumerWidget {
         elevation: 2,
       ),
       body: Consumer(
-        builder: (context, theme, _) {
+        builder: (context, ref, _) {
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             children: [
-              _buildThemeToggle(theme),
+              _buildThemeToggle(context, ref),
               _buildAboutSection(context),
               _buildExportOption(context),
             ],
@@ -29,7 +29,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildThemeToggle(AppThemeState theme) {
+  Widget _buildThemeToggle(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -48,12 +48,12 @@ class SettingsScreen extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  theme.themeMode == ThemeMode.dark
+                  ref.watch(themeProvider).themeMode == ThemeMode.dark
                       ? const Icon(Icons.dark_mode, size: 20.0)
                       : const Icon(Icons.light_mode, size: 20.0),
                   const SizedBox(width: 4),
                   Text(
-                    theme.themeMode == ThemeMode.dark ? 'Dark' : 'Light',
+                    ref.watch(themeProvider).themeMode == ThemeMode.dark ? 'Dark' : 'Light',
                     style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -63,7 +63,7 @@ class SettingsScreen extends ConsumerWidget {
           const Spacer(),
           ElevatedButton(
             onPressed: () {
-              if (theme.themeMode == ThemeMode.dark) {
+              if (ref.watch(themeProvider).themeMode == ThemeMode.dark) {
                 ref.read(themeProvider).setThemeMode(ThemeMode.light);
               } else {
                 ref.read(themeProvider).setThemeMode(ThemeMode.dark);
