@@ -15,8 +15,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:opencloset/app/bootstrap.dart'
-    show userPreferencesProvider, userSettingsProvider,
-          AppThemeNotifier, UserPreferences, UserSettings;
+    show
+        userPreferencesProvider,
+        userSettingsProvider,
+        AppThemeNotifier,
+        UserPreferences,
+        UserSettings;
 
 /// Test for theme provider registration.
 void main() {
@@ -37,10 +41,10 @@ void main() {
 
       // Initially in light mode
       expect(notifier.isDark, isFalse);
-      
+
       // Toggle to dark mode
       notifier.toggleTheme();
-      
+
       expect(notifier.isDark, isTrue);
     });
 
@@ -62,6 +66,44 @@ void main() {
       notifier.setThemeMode(ThemeMode.dark);
       expect(notifier.themeMode, equals(ThemeMode.dark));
     });
+  });
+
+  test('theme notifier getters return correct schemes', () {
+    final lightScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6750A4),
+      brightness: Brightness.light,
+    );
+    final darkScheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF6750A4),
+      brightness: Brightness.dark,
+    );
+
+    final notifier = AppThemeNotifier(
+      lightScheme: lightScheme,
+      darkScheme: darkScheme,
+    );
+
+    expect(notifier.lightScheme, same(lightScheme));
+    expect(notifier.darkScheme, same(darkScheme));
+
+    notifier.toggleTheme();
+    expect(notifier.lightScheme, same(lightScheme));
+    expect(notifier.darkScheme, same(darkScheme));
+
+  test('theme notifier disposes correctly without throwing', () {
+    final notifier = AppThemeNotifier(
+      lightScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF6750A4),
+        brightness: Brightness.light,
+      ),
+      darkScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF6750A4),
+        brightness: Brightness.dark,
+      ),
+    );
+
+    // Verify dispose can be called without errors
+    expect(() => notifier.dispose(), returnsNormally);
   });
 
   group('User Preferences Stub Tests', () {

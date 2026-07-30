@@ -72,35 +72,45 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
   /// [lightScheme] is the light color scheme.
   /// [darkScheme] is the dark color scheme.
   AppThemeNotifier({
-    required this.lightScheme,
-    required this.darkScheme,
-  })  : super(
-         AppThemeState(
-           isDark: WidgetsBinding.instance
-               .platformDispatcher.platformBrightness == Brightness.dark,
-           colorScheme: ColorScheme.fromSeed(
-               seedColor: const Color(0xFF6750A4),
-               brightness:
-                   WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark
-                   ? Brightness.dark
-                   : Brightness.light),
-           themeMode: ThemeMode.system,
-           lightScheme: lightScheme,
-           darkScheme: darkScheme,
-         ),
-       );
+    required ColorScheme lightScheme,
+    required ColorScheme darkScheme,
+  })  : _darkScheme = darkScheme,
+        _lightScheme = lightScheme,
+        super(
+          AppThemeState(
+            isDark:
+                WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+                    Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF6750A4),
+                brightness: WidgetsBinding
+                            .instance.platformDispatcher.platformBrightness ==
+                        Brightness.dark
+                    ? Brightness.dark
+                    : Brightness.light),
+            themeMode: ThemeMode.system,
+            lightScheme: lightScheme,
+            darkScheme: darkScheme,
+          ),
+        );
 
   /// The light color scheme.
-  final ColorScheme lightScheme;
+  final ColorScheme _lightScheme;
 
   /// The dark color scheme.
-  final ColorScheme darkScheme;
+  final ColorScheme _darkScheme;
 
   /// Whether dark theme is currently active.
   bool get isDark => state.isDark;
 
   /// The current theme mode (system, light, or dark).
   ThemeMode get themeMode => state.themeMode;
+
+  /// The current light color scheme.
+  ColorScheme get lightScheme => state.lightScheme;
+
+  /// The current dark color scheme.
+  ColorScheme get darkScheme => state.darkScheme;
 
   /// Toggles the theme mode between light and dark.
   ///
@@ -112,9 +122,15 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
       isDark: !state.isDark,
       colorScheme: _createColorScheme(!state.isDark),
       themeMode: state.themeMode,
-      lightScheme: lightScheme,
-      darkScheme: darkScheme,
+      lightScheme: _lightScheme,
+      darkScheme: _darkScheme,
     );
+  }
+
+  @override
+  void dispose() {
+    // Clean up any listeners or bound resources if added in the future
+    super.dispose();
   }
 
   /// Sets the theme mode to the specified value.
@@ -130,8 +146,8 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
       isDark: isDark,
       colorScheme: _createColorScheme(isDark),
       themeMode: mode,
-      lightScheme: lightScheme,
-      darkScheme: darkScheme,
+      lightScheme: _lightScheme,
+      darkScheme: _darkScheme,
     );
   }
 
@@ -237,13 +253,12 @@ class AppThemeState {
   final ThemeMode themeMode;
 
   /// Creates the appropriate color scheme based on the theme mode.
-  ColorScheme get effectiveColorScheme =>
-      themeMode == ThemeMode.system
-          ? ColorScheme.fromSeed(
-               seedColor: const Color(0xFF6750A4),
-               brightness: Brightness.light,
-             )
-          : (themeMode == ThemeMode.dark ? darkScheme : lightScheme);
+  ColorScheme get effectiveColorScheme => themeMode == ThemeMode.system
+      ? ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.light,
+        )
+      : (themeMode == ThemeMode.dark ? darkScheme : lightScheme);
 }
 
 /// User preferences stub provider.
