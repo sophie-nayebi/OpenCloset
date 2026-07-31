@@ -1,0 +1,58 @@
+# Docker Compose for OpenCloset Local CI/CD Pipeline
+# Run individual stages or the full pipeline
+
+services:
+  # Lint stage
+  lint:
+    build:
+      context: .
+      target: lint
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: >
+      sh -c "flutter pub get && flutter format --set-exit-if-changed ."
+    environment:
+      - FLUTTER_VERSION=stable
+
+  # Analyze stage
+  analyze:
+    build:
+      context: .
+      target: analyze
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: >
+      sh -c "flutter pub get && flutter analyze"
+    environment:
+      - FLUTTER_VERSION=stable
+
+  # Test stage
+  test:
+    build:
+      context: .
+      target: test
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: >
+      sh -c "flutter pub get && flutter test --no-pub --coverage"
+    environment:
+      - FLUTTER_VERSION=stable
+
+  # Full pipeline (runs all stages sequentially)
+  pipeline:
+    build:
+      context: .
+      target: pipeline
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    command: /run-pipeline.sh
+    environment:
+      - FLUTTER_VERSION=stable
