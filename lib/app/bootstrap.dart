@@ -1,7 +1,7 @@
 /// Application bootstrap and dependency injection configuration.
 ///
 /// This module sets up the Riverpod provider container with app-level providers,
-/// theme configuration, and preference stubs. All providers are lazy-loaded to
+/// theme configuration, and preference stubs. All providers are lazily-loaded to
 /// ensure efficient initialization.
 ///
 /// ## Provider Categories
@@ -80,14 +80,14 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
           AppThemeState(
             isDark:
                 WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-                    Brightness.dark,
+                Brightness.dark,
             colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF6750A4),
-                brightness: WidgetsBinding
-                            .instance.platformDispatcher.platformBrightness ==
-                        Brightness.dark
-                    ? Brightness.dark
-                    : Brightness.light),
+              seedColor: const Color(0xFF6750A4),
+              brightness: WidgetsBinding
+                  .instance.platformDispatcher.platformBrightness ==
+                  Brightness.dark
+                  ? Brightness.dark
+                  : Brightness.light),
             themeMode: ThemeMode.system,
             lightScheme: lightScheme,
             darkScheme: darkScheme,
@@ -125,12 +125,6 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
       lightScheme: _lightScheme,
       darkScheme: _darkScheme,
     );
-  }
-
-  @override
-  void dispose() {
-    // Clean up any listeners or bound resources if added in the future
-    super.dispose();
   }
 
   /// Sets the theme mode to the specified value.

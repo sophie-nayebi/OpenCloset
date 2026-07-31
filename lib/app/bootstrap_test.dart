@@ -68,42 +68,45 @@ void main() {
     });
   });
 
-  test('theme notifier getters return correct schemes', () {
-    final lightScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6750A4),
-      brightness: Brightness.light,
-    );
-    final darkScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6750A4),
-      brightness: Brightness.dark,
-    );
-
-    final notifier = AppThemeNotifier(
-      lightScheme: lightScheme,
-      darkScheme: darkScheme,
-    );
-
-    expect(notifier.lightScheme, same(lightScheme));
-    expect(notifier.darkScheme, same(darkScheme));
-
-    notifier.toggleTheme();
-    expect(notifier.lightScheme, same(lightScheme));
-    expect(notifier.darkScheme, same(darkScheme));
-
-  test('theme notifier disposes correctly without throwing', () {
-    final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(
+  group('Theme Notifier Additional Tests', () {
+    test('theme notifier getters return correct schemes', () {
+      final lightScheme = ColorScheme.fromSeed(
         seedColor: const Color(0xFF6750A4),
         brightness: Brightness.light,
-      ),
-      darkScheme: ColorScheme.fromSeed(
+      );
+      final darkScheme = ColorScheme.fromSeed(
         seedColor: const Color(0xFF6750A4),
         brightness: Brightness.dark,
-      ),
-    );
+      );
 
-    // Verify dispose can be called without errors
-    expect(() => notifier.dispose(), returnsNormally);
+      final notifier = AppThemeNotifier(
+        lightScheme: lightScheme,
+        darkScheme: darkScheme,
+      );
+
+      expect(notifier.lightScheme, same(lightScheme));
+      expect(notifier.darkScheme, same(darkScheme));
+
+      notifier.toggleTheme();
+      expect(notifier.lightScheme, same(lightScheme));
+      expect(notifier.darkScheme, same(darkScheme));
+    });
+
+    test('theme notifier disposes correctly without throwing', () {
+      final notifier = AppThemeNotifier(
+        lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.light,
+        ),
+        darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4),
+          brightness: Brightness.dark,
+        ),
+      );
+
+      // Verify dispose can be called without errors
+      expect(() => notifier.dispose(), returnsNormally);
+    });
   });
 
   group('User Preferences Stub Tests', () {
