@@ -26,30 +26,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: ${{ env.FLUTTER_VERSION }}
+      - name: Pull lint Docker image
+        run: |
+          echo "Pulling lint Docker image..."
+          docker pull open-closet:lint
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/bin
-          key: ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-
-
-      - name: Cache Flutter pub dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.yaml', 'packages/**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Run lint stage with Docker
+        run: |
+          echo "Running lint stage in Docker container..."
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:lint
 
       - name: Run Flutter format (check)
         run: flutter format --set-exit-if-changed .
@@ -66,34 +54,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: ${{ env.FLUTTER_VERSION }}
+      - name: Pull test Docker image
+        run: |
+          echo "Pulling test Docker image..."
+          docker pull open-closet:test
 
-      - name: Cache Flutter SDK
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/bin
-          key: ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-
-
-      - name: Cache Flutter pub dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.yaml', 'packages/**/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Run Flutter test
-        run: flutter test --no-pub --coverage
-        timeout-minutes: 10
+      - name: Run test stage with Docker
+        run: |
+          echo "Running test stage in Docker container..."
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:test
 
       - name: Check coverage threshold
         run: |
@@ -128,3 +100,25 @@ jobs:
           files: ./coverage/lcov.info
           fail_ci_if_error: true
           flags: flutter
+
+  pipeline:
+    name: Full Pipeline
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Pull pipeline Docker image
+        run: |
+          echo "Pulling pipeline Docker image..."
+          docker pull open-closet:pipeline
+
+      - name: Run full pipeline with Docker
+        run: |
+          echo "Running full pipeline in Docker container..."
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:pipeline
