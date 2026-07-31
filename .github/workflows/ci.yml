@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: stable
+  COVERAGE_THRESHOLD: 80
+
+jobs:
+  lint:
+    name: Lint (Format & Analyze)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_VERSION }}
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-
+
+      - name: Cache Flutter pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.yaml', 'packages/**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Flutter format (check)
+        run: flutter format --set-exit-if-changed .
+
+      - name: Run Flutter analyze
+        run: flutter analyze
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_VERSION }}
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/bin
+          key: ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-
+
+      - name: Cache Flutter pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.yaml', 'packages/**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Flutter test
+        run: flutter test --no-pub --coverage
+        timeout-minutes: 10
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD:-80}}"
+          # Parse total coverage percentage from lcov.info (last coverage line)
+          COVERAGE_RESULT=$(grep -m1 "^coverage: " coverage/lcov.info | sed 's/.*: \([0-9.]*\)%.*/\1/')
+          if [ -z "$COVERAGE_RESULT" ]; then
+            echo "❌ Error: Could not parse coverage result from lcov.info"
+            echo "   Expected format: coverage: XX.X% in file"
+            exit 1
+          fi
+          if [ $(python3 -c "print(1 if float('$COVERAGE_RESULT') < float('$COVERAGE_THRESHOLD') else 0)") -eq 1 ]; then
+            echo "❌ Coverage check failed: ${COVERAGE_RESULT}% < ${COVERAGE_THRESHOLD}%"
+            echo "   Current coverage: ${COVERAGE_RESULT}%"
+            echo "   Required coverage: ${COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+          echo "✅ Coverage check passed: ${COVERAGE_RESULT}% >= ${COVERAGE_THRESHOLD}%"
+          echo "   Current coverage: ${COVERAGE_RESULT}%"
+          echo "   Required coverage: ${COVERAGE_THRESHOLD}%"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: true
+          flags: flutter
