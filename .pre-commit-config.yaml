@@ -1,0 +1,77 @@
+# Pre-commit configuration for OpenCloset
+# This file defines hooks that run before each commit
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        # Ignore Flutter generated files
+        exclude: 'lib/generated_l10n|build|\.dart_tool'
+      - id: end-of-file-fixer
+        exclude: 'lib/generated_l10n|build|\.dart_tool'
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=150']
+
+  - repo: local
+    hooks:
+      # Lint hook - runs Flutter format check
+      - id: flutter-lint
+        name: Flutter Lint (Format)
+        entry: make lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter format check before committing'
+
+      # Analyze hook - runs Flutter analyze
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: make analyze
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter analyze before committing'
+
+      # Test hook - runs Flutter tests
+      - id: flutter-test
+        name: Flutter Test
+        entry: make test
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter tests before committing'
+
+      # Pre-commit hook script - alternative to pre-commit
+      - id: pre-commit-hook
+        name: OpenCloset Pre-commit Hook
+        entry: |
+          #!/bin/bash
+          set -e
+          
+          echo "=== Running OpenCloset Pre-commit Hook ==="
+          echo ""
+          
+          echo "1. Running Flutter format check..."
+          flutter pub get
+          flutter format --set-exit-if-changed . || exit 1
+          echo "   ✅ Format check passed"
+          
+          echo ""
+          echo "2. Running Flutter analyze..."
+          flutter analyze || exit 1
+          echo "   ✅ Analysis completed"
+          
+          echo ""
+          echo "3. Running Flutter tests..."
+          flutter pub get
+          flutter test --no-pub --coverage || exit 1
+          echo "   ✅ Tests completed"
+          
+          echo ""
+          echo "=== All pre-commit checks passed ==="
+        language: script
+        pass_filenames: false
+        always_run: true
+        files: '\.dart$'
