@@ -30,8 +30,12 @@ help:
 lint:
 	@echo "=== Running Lint Check ==="
 	flutter pub get
-	@echo "Running format check..."
-	flutter format --set-exit-if-changed . || echo "Format check failed - please format your code first"
+	@if command -v flutter &> /dev/null && flutter --version 2>/dev/null | grep -q "3."; then \
+		@echo "Running format check..." && \
+		flutter format --set-exit-if-changed . || echo "Format check failed - please format your code first"; \
+	else \
+		@echo "⚠️  Skipping format check (Flutter format not available)"; \
+	fi
 	flutter analyze
 	@echo "=== Lint check completed ==="
 

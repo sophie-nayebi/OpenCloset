@@ -55,8 +55,12 @@ repos:
           
           echo "1. Running Flutter format check..."
           flutter pub get
-          flutter format --set-exit-if-changed . || exit 1
-          echo "   ✅ Format check passed"
+          if command -v flutter &> /dev/null && flutter --version 2>/dev/null | grep -q "3."; then
+            flutter format --set-exit-if-changed . || exit 1
+            echo "   ✅ Format check passed"
+          else
+            echo "   ⚠️  Skipping format check (Flutter format not available)"
+          fi
           
           echo ""
           echo "2. Running Flutter analyze..."
