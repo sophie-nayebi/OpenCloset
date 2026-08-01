@@ -1,0 +1,103 @@
+# Pre-commit configuration for OpenCloset
+# This file defines hooks that run before each commit
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        # Ignore Flutter generated files
+        exclude: 'lib/generated_l10n|build|\.dart_tool'
+      - id: end-of-file-fixer
+        exclude: 'lib/generated_l10n|build|\.dart_tool'
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=150']
+
+  - repo: local
+    hooks:
+      # Lint hook - runs Flutter format check
+      - id: flutter-lint
+        name: Flutter Lint (Format)
+        entry: make lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter format check before committing'
+
+      # Analyze hook - runs Flutter analyze
+      - id: flutter-analyze
+        name: Flutter Analyze
+        entry: make analyze
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter analyze before committing'
+
+      # Test hook - runs Flutter tests
+      - id: flutter-test
+        name: Flutter Test
+        entry: make test
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: 'Run Flutter tests before committing'
+
+      # Pre-commit hook script - alternative to pre-commit
+      - id: pre-commit-hook
+        name: OpenCloset Pre-commit Hook
+        entry: |
+          #!/bin/bash
+          set -e
+          
+          echo "=== Running OpenCloset Pre-commit Hook ==="
+          echo ""
+          
+          echo "1. Running Flutter format check..."
+          flutter pub get
+          if command -v flutter &> /dev/null && flutter --version 2>/dev/null | grep -q "3."; then
+            flutter format --set-exit-if-changed . || exit 1
+            echo "   ✅ Format check passed"
+          else
+            echo "   ⚠️  Skipping format check (Flutter format not available)"
+          fi
+          
+          echo ""
+          echo "2. Running Flutter analyze..."
+          flutter analyze || exit 1
+          echo "   ✅ Analysis completed"
+          
+          echo ""
+          echo "3. Running Flutter tests..."
+          flutter pub get
+          flutter test --no-pub --coverage || exit 1
+          echo "   ✅ Tests completed"
+          
+          echo ""
+          echo "4. Checking coverage threshold..."
+          COVERAGE_THRESHOLD="${COVERAGE_THRESHOLD:-80}"
+          # Parse coverage from lcov.info using LF/LH pairs (Flutter's format)
+          TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
+          TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
+          COVERAGE_RESULT=$(python3 -c "print(round((int('$TOTAL_HITS') / int('$TOTAL_FILE')) * 100, 1) if int('$TOTAL_FILE') > 0 else 0)")
+          if [ -z "$COVERAGE_RESULT" ]; then
+            echo "❌ Error: Could not parse coverage result from lcov.info"
+            echo "   Expected LF/LH format in file"
+            exit 1
+          fi
+          COVERAGE_MET=$(python3 -c "print(1 if float('$COVERAGE_RESULT') >= float('$COVERAGE_THRESHOLD') else 0)")
+          if [ "$COVERAGE_MET" -eq 1 ]; then
+            echo "   ✅ Coverage check passed: ${COVERAGE_RESULT}% >= ${COVERAGE_THRESHOLD}%"
+          else
+            echo "❌ Coverage check failed: ${COVERAGE_RESULT}% < ${COVERAGE_THRESHOLD}%"
+            echo "   Current coverage: ${COVERAGE_RESULT}%"
+            echo "   Required coverage: ${COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+          
+          echo ""
+          echo "=== All pre-commit checks passed ==="
+        language: script
+        pass_filenames: false
+        always_run: true
+        files: '\.dart$'

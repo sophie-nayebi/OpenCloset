@@ -1,0 +1,192 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: stable
+  COVERAGE_THRESHOLD: 80
+
+jobs:
+  build-lint:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup Docker
+        uses: actions/setup-docker@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-path: ~/.cache/flutter/pub
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Build lint image with cache
+        run: |
+          docker build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max,size=10G \
+            --target lint \
+            -t open-closet:lint \
+            --progress=plain \
+            -f Dockerfile \
+            .
+
+      - name: Run lint stage with Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:lint
+
+      - name: Upload lint image
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-image
+          path: |
+            .
+            !coverage/
+
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup Docker
+        uses: actions/setup-docker@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-path: ~/.cache/flutter/pub
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Build test image with cache
+        run: |
+          docker build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max,size=10G \
+            --target test \
+            -t open-closet:test \
+            --progress=plain \
+            -f Dockerfile \
+            .
+
+      - name: Run test stage with Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:test
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD }}"
+          # Parse coverage from lcov.info using LF/LH pairs (Flutter's format)
+          TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
+          TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
+          COVERAGE_RESULT=$(python3 -c "print(round((int('$TOTAL_HITS') / int('$TOTAL_FILE')) * 100, 1) if int('$TOTAL_FILE') > 0 else 0)")
+          if [ -z "$COVERAGE_RESULT" ]; then
+            echo "❌ Error: Could not parse coverage result from lcov.info"
+            echo "   Expected LF/LH format in file"
+            exit 1
+          fi
+          if [ $(python3 -c "print(1 if float('$COVERAGE_RESULT') < float('$COVERAGE_THRESHOLD') else 0)") -eq 1 ]; then
+            echo "❌ Coverage check failed: ${COVERAGE_RESULT}% < ${COVERAGE_THRESHOLD}%"
+            echo "   Current coverage: ${COVERAGE_RESULT}%"
+            echo "   Required coverage: ${COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+          echo "✅ Coverage check passed: ${COVERAGE_RESULT}% >= ${COVERAGE_THRESHOLD}%"
+          echo "   Current coverage: ${COVERAGE_RESULT}%"
+          echo "   Required coverage: ${COVERAGE_THRESHOLD}%"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: true
+          flags: flutter
+
+  build-pipeline:
+    name: Build Pipeline
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup Docker
+        uses: actions/setup-docker@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          cache-path: ~/.cache/flutter/pub
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Build pipeline image with cache
+        run: |
+          docker build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max,size=10G \
+            --target pipeline \
+            -t open-closet:pipeline \
+            --progress=plain \
+            -f Dockerfile \
+            .
+
+      - name: Run pipeline stage with Docker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            open-closet:pipeline
