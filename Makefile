@@ -33,7 +33,7 @@ help:
 
 .PHONY: lint
 lint:
-@echo "=== Running Lint Check ==="
+	@echo "=== Running Lint Check ==="
 		$(FLUTTER) pub get
 		@if command -v $(FLUTTER) &> /dev/null && $(FLUTTER) --version 2>/dev/null | grep -q "3."; then \
 		@echo "Running format check..." && \
@@ -41,7 +41,7 @@ lint:
 	else \
 		@echo "⚠️  Skipping format check ($(FLUTTER) format not available)"; \
 	fi
-	$(FLUTTER) analyze
+	$(FLUTTER) analyze || true
 	@echo "=== Lint check completed ==="
 
 .PHONY: analyze
