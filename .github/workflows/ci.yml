@@ -115,11 +115,13 @@ jobs:
       - name: Check coverage threshold
         run: |
           COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD:-80}}"
-          # Parse total coverage percentage from lcov.info (last coverage line)
-          COVERAGE_RESULT=$(tail -1 coverage/lcov.info | sed 's/.*: \([0-9.]*\)%.*/\1/')
+          # Parse coverage from lcov.info using LF/LH pairs (Flutter's format)
+          TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
+          TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
+          COVERAGE_RESULT=$(python3 -c "print(round((int('$TOTAL_HITS') / int('$TOTAL_FILE')) * 100, 1) if int('$TOTAL_FILE') > 0 else 0)")
           if [ -z "$COVERAGE_RESULT" ]; then
             echo "❌ Error: Could not parse coverage result from lcov.info"
-            echo "   Expected format: coverage: XX.X% in file"
+            echo "   Expected LF/LH format in file"
             exit 1
           fi
           if [ $(python3 -c "print(1 if float('$COVERAGE_RESULT') < float('$COVERAGE_THRESHOLD') else 0)") -eq 1 ]; then

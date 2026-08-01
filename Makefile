@@ -51,6 +51,13 @@ test:
 	@echo "=== Running Tests ==="
 	flutter pub get
 	flutter test --no-pub --coverage
+	@echo ""
+	@echo "=== Coverage Report ==="
+	@TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0"); \
+	TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0"); \
+	COVERAGE_RESULT=$(python3 -c "print(round((int('$(TOTAL_HITS)') / int('$(TOTAL_FILE)')) * 100, 1) if int('$(TOTAL_FILE)') > 0 else 0)")
+	echo "Total lines: $(TOTAL_FILE), Hit lines: $(TOTAL_HITS)"
+	echo "Coverage: ${COVERAGE_RESULT}%"
 	@echo "=== Tests completed ==="
 
 .PHONY: all
