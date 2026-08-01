@@ -2,6 +2,11 @@
 # Easy local execution of lint, analyze, test stages
 
 # =============================================================================
+# Configuration
+# =============================================================================
+FLUTTER ?= /home/user/develop/flutter/bin/flutter
+
+# =============================================================================
 # Default target
 # =============================================================================
 .PHONY: help
@@ -28,29 +33,29 @@ help:
 
 .PHONY: lint
 lint:
-	@echo "=== Running Lint Check ==="
-	flutter pub get
-	@if command -v flutter &> /dev/null && flutter --version 2>/dev/null | grep -q "3."; then \
+@echo "=== Running Lint Check ==="
+		$(FLUTTER) pub get
+		@if command -v $(FLUTTER) &> /dev/null && $(FLUTTER) --version 2>/dev/null | grep -q "3."; then \
 		@echo "Running format check..." && \
-		flutter format --set-exit-if-changed . || echo "Format check failed - please format your code first"; \
+		$(FLUTTER) format --set-exit-if-changed . || echo "Format check failed - please format your code first"; \
 	else \
-		@echo "⚠️  Skipping format check (Flutter format not available)"; \
+		@echo "⚠️  Skipping format check ($(FLUTTER) format not available)"; \
 	fi
-	flutter analyze
+	$(FLUTTER) analyze
 	@echo "=== Lint check completed ==="
 
 .PHONY: analyze
 analyze:
 	@echo "=== Running Analysis ==="
-	flutter pub get
-	flutter analyze
+	$(FLUTTER) pub get
+	$(FLUTTER) analyze
 	@echo "=== Analysis completed ==="
 
 .PHONY: test
 test:
 	@echo "=== Running Tests ==="
-	flutter pub get
-	flutter test --no-pub --coverage
+	$(FLUTTER) pub get
+	$(FLUTTER) test --no-pub --coverage
 	@echo ""
 	@echo "=== Coverage Report ==="
 	@TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0"); \
@@ -115,5 +120,5 @@ clean:
 .PHONY: setup
 setup:
 	@echo "=== Setting up project ==="
-	flutter pub get
+	$(FLUTTER) pub get
 	@echo "=== Setup completed ==="

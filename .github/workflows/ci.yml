@@ -114,7 +114,7 @@ jobs:
 
       - name: Check coverage threshold
         run: |
-          COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD:-80}}"
+          COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD }}"
           # Parse coverage from lcov.info using LF/LH pairs (Flutter's format)
           TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
           TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
