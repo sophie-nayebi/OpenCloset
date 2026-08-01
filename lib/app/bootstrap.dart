@@ -40,9 +40,12 @@
 /// // Set specific theme mode:
 /// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
 /// ```
+/// Usage: ref.watch(themeProvider)
+/// ```
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:opencloset/shared/constants/theme_config.dart';
 
 /// The theme notifier that manages application theme state.
 ///
@@ -67,27 +70,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// ref.read(themeProvider).setThemeMode(ThemeMode.dark);
 /// ```
 class AppThemeNotifier extends StateNotifier<AppThemeState> {
+  /// Whether dark mode is active based on platform brightness.
+  static bool _getIsDarkMode() =>
+      WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark;
+
   /// Creates a new [AppThemeNotifier] instance.
   ///
   /// [lightScheme] is the light color scheme.
   /// [darkScheme] is the dark color scheme.
   AppThemeNotifier({
-    required ColorScheme lightScheme,
-    required ColorScheme darkScheme,
+    required final ColorScheme lightScheme,
+    required final ColorScheme darkScheme,
   })  : _darkScheme = darkScheme,
         _lightScheme = lightScheme,
         super(
           AppThemeState(
-            isDark:
-                WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-                Brightness.dark,
+            isDark: _getIsDarkMode(),
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF6750A4),
-              brightness: WidgetsBinding
-                  .instance.platformDispatcher.platformBrightness ==
-                  Brightness.dark
+              seedColor: ThemeConfig.seedColor,
+              brightness: _getIsDarkMode()
                   ? Brightness.dark
-                  : Brightness.light),
+                  : Brightness.light,
+            ),
             themeMode: ThemeMode.system,
             lightScheme: lightScheme,
             darkScheme: darkScheme,
@@ -147,10 +152,7 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
 
   /// Creates a color scheme based on the brightness.
   ColorScheme _createColorScheme(bool isDark) {
-    return ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6750A4),
-      brightness: isDark ? Brightness.dark : Brightness.light,
-    );
+    return ThemeConfig.getScheme(isDark);
   }
 }
 
@@ -186,14 +188,8 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
 /// ```
 final themeProvider = Provider<AppThemeNotifier>((ref) {
   return AppThemeNotifier(
-    lightScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6750A4),
-      brightness: Brightness.light,
-    ),
-    darkScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF6750A4),
-      brightness: Brightness.dark,
-    ),
+    lightScheme: ThemeConfig.lightScheme,
+    darkScheme: ThemeConfig.darkScheme,
   );
 });
 
@@ -248,10 +244,7 @@ class AppThemeState {
 
   /// Creates the appropriate color scheme based on the theme mode.
   ColorScheme get effectiveColorScheme => themeMode == ThemeMode.system
-      ? ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4),
-          brightness: Brightness.light,
-        )
+      ? ThemeConfig.lightScheme
       : (themeMode == ThemeMode.dark ? darkScheme : lightScheme);
 }
 

@@ -9,3 +9,5 @@
 ///
 /// String apiBaseUrl = AppConstants.apiBaseUrl;
 /// ```
+
+export 'theme_config.dart';
