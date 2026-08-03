@@ -16,7 +16,7 @@ Thank you for your interest in contributing! Below are the guidelines and conven
 - Small files, small widgets, small functions
 - Prefer composition over inheritance
 - Prefer immutable models
-- Follow [Dart Effective Code](https://dart.dev/effective/dart) conventions
+- Follow [Dart Effective Code](https://dart.dev/effective-dart) conventions
 - Run `flutter analyze` before submitting
 
 ## Architecture
