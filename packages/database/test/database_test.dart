@@ -81,8 +81,6 @@ void main() {
     await _cleanupAllDirectories();
   });
 
- 
-
   test('should create database instance', () {
     expect(() => OpenClosetDatabase('/tmp'), returnsNormally);
   });
@@ -443,12 +441,12 @@ void main() {
         outfitId: 'cascade_outfit_1',
         itemId: 'cascade_item_2',
       );
-      
+
       final outfitItemsBefore = await db.readAllOutfitItems();
       expect(outfitItemsBefore.length, 2);
-      
+
       await db.deleteOutfit('cascade_outfit_1');
-      
+
       final outfitItemsAfter = await db.readAllOutfitItems();
       expect(outfitItemsAfter.length, 0);
     });
@@ -468,13 +466,13 @@ void main() {
         outfitId: 'cascade_outfit_2',
         itemId: 'cascade_item_3',
       );
-      
+
       await db.deleteOutfit('cascade_outfit_2');
-      
+
       // The outfit should be deleted
       final outfits = await db.readAllOutfits();
       expect(outfits.length, 0);
-      
+
       // No orphaned entries should exist
       final outfitItems = await db.readAllOutfitItems();
       expect(outfitItems.length, 0);
@@ -487,13 +485,15 @@ void main() {
         await Directory('/tmp/id_validation_empty').delete(recursive: true);
       } catch (_) {}
       final db = OpenClosetDatabase('/tmp/id_validation_empty');
-      expect(() async => await db.createCategory(
-        id: '',
-        name: 'T-Shirt',
-        description: 'Cotton t-shirt',
-      ), throwsArgumentError);
+      expect(
+          () async => await db.createCategory(
+                id: '',
+                name: 'T-Shirt',
+                description: 'Cotton t-shirt',
+              ),
+          throwsArgumentError);
     });
-    
+
     test('should accept simple string IDs', () async {
       try {
         await Directory('/tmp/id_validation_simple').delete(recursive: true);
@@ -507,7 +507,7 @@ void main() {
       final categories = await db.readAllCategories();
       expect(categories.length, 1);
     });
-    
+
     test('should accept UUID format IDs', () async {
       try {
         await Directory('/tmp/id_validation_uuid').delete(recursive: true);
@@ -521,7 +521,7 @@ void main() {
       final categories = await db.readAllCategories();
       expect(categories.length, 1);
     });
-    
+
     test('should reject duplicate ID', () async {
       try {
         await Directory('/tmp/id_validation_dup').delete(recursive: true);
@@ -532,12 +532,14 @@ void main() {
         name: 'T-Shirt',
         description: 'Cotton t-shirt',
       );
-      
-      expect(() async => await db.createCategory(
-        id: 'cat1',
-        name: 'T-Shirt 2',
-        description: 'Cotton t-shirt 2',
-      ), throwsA(isA<DuplicateIdError>()));
+
+      expect(
+          () async => await db.createCategory(
+                id: 'cat1',
+                name: 'T-Shirt 2',
+                description: 'Cotton t-shirt 2',
+              ),
+          throwsA(isA<DuplicateIdError>()));
     });
   });
 }

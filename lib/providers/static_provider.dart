@@ -48,7 +48,7 @@ final appNameProvider = Provider.value<String>('OpenCloset');
 /// Static feature flag provider.
 ///
 /// Demonstrates how to use static providers for feature flags.
-/// 
+///
 /// Example:
 /// ```dart
 /// final enableAIProvider = Provider.value<bool>(false);

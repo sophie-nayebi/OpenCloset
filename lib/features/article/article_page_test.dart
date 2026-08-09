@@ -14,7 +14,8 @@ import 'package:opencloset/shared/widgets/widgets.dart';
 
 void main() {
   group('ArticlePage tests', () {
-    testWidgets('ArticlePage widget can be instantiated', (WidgetTester tester) async {
+    testWidgets('ArticlePage widget can be instantiated',
+        (WidgetTester tester) async {
       // Arrange & Act
       final article = Article(
         id: 'test-123',
@@ -33,7 +34,8 @@ void main() {
       expect(() => ArticlePage(article: article), returnsNormally);
     });
 
-    testWidgets('Article page displays article title', (WidgetTester tester) async {
+    testWidgets('Article page displays article title',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -58,7 +60,8 @@ void main() {
       expect(find.text('Test Article Title'), findsOneWidget);
     });
 
-    testWidgets('Article page displays article subtitle', (WidgetTester tester) async {
+    testWidgets('Article page displays article subtitle',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -83,7 +86,8 @@ void main() {
       expect(find.text('Test Subtitle Text'), findsOneWidget);
     });
 
-    testWidgets('Article page displays article content', (WidgetTester tester) async {
+    testWidgets('Article page displays article content',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -105,10 +109,14 @@ void main() {
       );
 
       // Assert - Content should be displayed
-      expect(find.text('This is the main article content that should be displayed'), findsOneWidget);
+      expect(
+          find.text(
+              'This is the main article content that should be displayed'),
+          findsOneWidget);
     });
 
-    testWidgets('Article page displays article category', (WidgetTester tester) async {
+    testWidgets('Article page displays article category',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -133,7 +141,8 @@ void main() {
       expect(find.text('Fashion'), findsOneWidget);
     });
 
-    testWidgets('Article page displays carousel with multiple images', (WidgetTester tester) async {
+    testWidgets('Article page displays carousel with multiple images',
+        (WidgetTester tester) async {
       // Arrange - Create article with multiple images for carousel
       final article = Article(
         id: 'test-123',
@@ -162,7 +171,9 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('Article page has carousel navigation controls (prev/next buttons)', (WidgetTester tester) async {
+    testWidgets(
+        'Article page has carousel navigation controls (prev/next buttons)',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -190,7 +201,8 @@ void main() {
       expect(find.byIcon(Icons.chevron_right), findsOneWidget);
     });
 
-    testWidgets('Article page transitions between carousel images', (WidgetTester tester) async {
+    testWidgets('Article page transitions between carousel images',
+        (WidgetTester tester) async {
       // Arrange - Create article with multiple images for carousel
       final article = Article(
         id: 'test-123',
@@ -227,7 +239,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('Article page displays article in Material 3 style', (WidgetTester tester) async {
+    testWidgets('Article page displays article in Material 3 style',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -253,7 +266,8 @@ void main() {
       expect(find.byType(AppBar), findsOneWidget);
     });
 
-    testWidgets('Article page supports responsive layout', (WidgetTester tester) async {
+    testWidgets('Article page supports responsive layout',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',
@@ -278,7 +292,8 @@ void main() {
       expect(find.byType(Scaffold), findsOneWidget);
     });
 
-    testWidgets('Article page handles article with no images', (WidgetTester tester) async {
+    testWidgets('Article page handles article with no images',
+        (WidgetTester tester) async {
       // Arrange - Create article without images
       final article = Article(
         id: 'test-123',
@@ -303,7 +318,8 @@ void main() {
       expect(find.text('Test Article'), findsOneWidget);
     });
 
-    testWidgets('Article page has back navigation', (WidgetTester tester) async {
+    testWidgets('Article page has back navigation',
+        (WidgetTester tester) async {
       // Arrange
       final article = Article(
         id: 'test-123',

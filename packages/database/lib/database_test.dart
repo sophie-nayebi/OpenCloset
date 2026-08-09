@@ -401,12 +401,12 @@ void main() {
         outfitId: 'outfit1',
         itemId: 'item2',
       );
-      
+
       final outfitItemsBefore = await db.readAllOutfitItems();
       expect(outfitItemsBefore.length, 2);
-      
+
       await db.deleteOutfit('outfit1');
-      
+
       final outfitItemsAfter = await db.readAllOutfitItems();
       expect(outfitItemsAfter.length, 0);
     });
@@ -423,13 +423,13 @@ void main() {
         outfitId: 'outfit1',
         itemId: 'item1',
       );
-      
+
       await db.deleteOutfit('outfit1');
-      
+
       // The outfit should be deleted
       final outfits = await db.readAllOutfits();
       expect(outfits.length, 0);
-      
+
       // No orphaned entries should exist
       final outfitItems = await db.readAllOutfitItems();
       expect(outfitItems.length, 0);
@@ -447,7 +447,7 @@ void main() {
           description: 'Description $i',
         );
       }
-      
+
       final categories = await db.readAllCategories();
       expect(categories.length, 10);
     });
@@ -460,7 +460,7 @@ void main() {
         name: 'Category 1',
         description: 'Description 1',
       );
-      
+
       for (int i = 0; i < 10; i++) {
         await db.updateCategory(
           id: 'cat1',
@@ -468,7 +468,7 @@ void main() {
           description: 'Description $i',
         );
       }
-      
+
       final category = await db.readCategoryById('cat1');
       expect(category?['description'], 'Description 9');
     });

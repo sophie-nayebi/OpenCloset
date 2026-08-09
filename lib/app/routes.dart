@@ -54,7 +54,7 @@ final _router = GoRouter(
       builder: (context, state) {
         // Parse the article ID from the path parameters
         final articleId = state.pathParameters['articleId'] ?? '';
-        
+
         // For demo/testing, create a mock article
         // In production, this would fetch from a provider
         final article = Article(

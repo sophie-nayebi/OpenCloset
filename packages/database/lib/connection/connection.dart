@@ -23,7 +23,7 @@ String _getDesktopPath() {
     // Windows: Use APPDATA or USERPROFILE
     final appData = Platform.environment['APPDATA'];
     final userProfile = Platform.environment['USERPROFILE'];
-    
+
     if (appData != null) {
       return '$appData/OpenCloset/data';
     } else if (userProfile != null) {

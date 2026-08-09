@@ -12,7 +12,8 @@ import 'package:opencloset/shared/widgets/widgets.dart';
 
 void main() {
   group('CarouselPage tests', () {
-    testWidgets('CarouselPage widget can be instantiated with images', (WidgetTester tester) async {
+    testWidgets('CarouselPage widget can be instantiated with images',
+        (WidgetTester tester) async {
       // Arrange & Act
       final images = [
         'https://example.com/image1.jpg',
@@ -24,7 +25,8 @@ void main() {
       expect(() => CarouselPage(imageUrls: images), returnsNormally);
     });
 
-    testWidgets('CarouselPage displays all images in carousel', (WidgetTester tester) async {
+    testWidgets('CarouselPage displays all images in carousel',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -43,7 +45,9 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage displays image placeholders when images not available', (WidgetTester tester) async {
+    testWidgets(
+        'CarouselPage displays image placeholders when images not available',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -61,7 +65,8 @@ void main() {
       expect(find.byType(Container), findsWidgets);
     });
 
-    testWidgets('CarouselPage handles single image gracefully', (WidgetTester tester) async {
+    testWidgets('CarouselPage handles single image gracefully',
+        (WidgetTester tester) async {
       // Arrange
       final images = ['https://example.com/single-image.jpg'];
 
@@ -76,7 +81,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage handles empty image list gracefully', (WidgetTester tester) async {
+    testWidgets('CarouselPage handles empty image list gracefully',
+        (WidgetTester tester) async {
       // Arrange
       final images = <String>[];
 
@@ -91,9 +97,13 @@ void main() {
       expect(find.text('No Images'), findsOneWidget);
     });
 
-    testWidgets('CarouselPage has previous button', (WidgetTester tester) async {
+    testWidgets('CarouselPage has previous button',
+        (WidgetTester tester) async {
       // Arrange
-      final images = ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'];
+      final images = [
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg'
+      ];
 
       // Act - Build the carousel
       await tester.pumpWidget(
@@ -108,7 +118,10 @@ void main() {
 
     testWidgets('CarouselPage has next button', (WidgetTester tester) async {
       // Arrange
-      final images = ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'];
+      final images = [
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg'
+      ];
 
       // Act - Build the carousel
       await tester.pumpWidget(
@@ -121,7 +134,8 @@ void main() {
       expect(find.byIcon(Icons.chevron_right), findsOneWidget);
     });
 
-    testWidgets('CarouselPage navigates to next image on next button tap', (WidgetTester tester) async {
+    testWidgets('CarouselPage navigates to next image on next button tap',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -148,7 +162,9 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage navigates to previous image on previous button tap', (WidgetTester tester) async {
+    testWidgets(
+        'CarouselPage navigates to previous image on previous button tap',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -183,7 +199,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage wraps around on next button at last image', (WidgetTester tester) async {
+    testWidgets('CarouselPage wraps around on next button at last image',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -221,7 +238,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage wraps around on previous button at first image', (WidgetTester tester) async {
+    testWidgets('CarouselPage wraps around on previous button at first image',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -258,7 +276,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage supports infinite scrolling', (WidgetTester tester) async {
+    testWidgets('CarouselPage supports infinite scrolling',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -277,7 +296,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage auto-scrolls automatically', (WidgetTester tester) async {
+    testWidgets('CarouselPage auto-scrolls automatically',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',
@@ -296,7 +316,8 @@ void main() {
       expect(find.byType(PageView), findsOneWidget);
     });
 
-    testWidgets('CarouselPage has proper page controller', (WidgetTester tester) async {
+    testWidgets('CarouselPage has proper page controller',
+        (WidgetTester tester) async {
       // Arrange
       final images = [
         'https://example.com/image1.jpg',

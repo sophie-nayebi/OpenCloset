@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 /// Test for pre-commit hook script functionality
-/// 
+///
 /// This test suite verifies that the pre-commit hook script
 /// correctly validates code before committing.
 ///
@@ -13,23 +13,25 @@ void main() {
     test('pre-commit hook should run format check', () {
       // This test documents the expected behavior of the pre-commit hook
       // The actual format check is performed by: flutter format --set-exit-if-changed .
-      
+
       expect(true, isTrue, reason: 'Format check should be performed');
-      expect(false, isFalse, reason: 'Format check should fail if code is not formatted');
+      expect(false, isFalse,
+          reason: 'Format check should fail if code is not formatted');
     });
 
     test('pre-commit hook should run analysis', () {
       // This test documents the expected behavior of the pre-commit hook
       // The actual analysis is performed by: flutter analyze
-      
+
       expect(true, isTrue, reason: 'Analysis should be performed');
-      expect(false, isFalse, reason: 'Analysis should fail if there are issues');
+      expect(false, isFalse,
+          reason: 'Analysis should fail if there are issues');
     });
 
     test('pre-commit hook should run tests', () {
       // This test documents the expected behavior of the pre-commit hook
       // The actual tests are performed by: flutter test --no-pub --coverage
-      
+
       expect(true, isTrue, reason: 'Tests should be performed');
       expect(false, isFalse, reason: 'Tests should fail if there are failures');
     });
@@ -37,10 +39,12 @@ void main() {
     test('pre-commit hook should check coverage threshold', () {
       // This test documents the expected behavior of the pre-commit hook
       // Coverage threshold is checked in the pre-commit hook script
-      
+
       const defaultThreshold = 80;
-      expect(defaultThreshold, greaterThan(0), reason: 'Coverage threshold should be positive');
-      expect(defaultThreshold, lessThan(100), reason: 'Coverage threshold should be less than 100');
+      expect(defaultThreshold, greaterThan(0),
+          reason: 'Coverage threshold should be positive');
+      expect(defaultThreshold, lessThan(100),
+          reason: 'Coverage threshold should be less than 100');
     });
   });
 
@@ -48,46 +52,54 @@ void main() {
     test('Dockerfile should have lint stage', () {
       // Verify the Dockerfile has a lint stage defined
       // Stage should run: flutter format --set-exit-if-changed .
-      expect(true, isTrue, reason: 'Lint stage should be defined in Dockerfile');
+      expect(true, isTrue,
+          reason: 'Lint stage should be defined in Dockerfile');
     });
 
     test('Dockerfile should have analyze stage', () {
       // Verify the Dockerfile has an analyze stage defined
       // Stage should run: flutter analyze
-      expect(true, isTrue, reason: 'Analyze stage should be defined in Dockerfile');
+      expect(true, isTrue,
+          reason: 'Analyze stage should be defined in Dockerfile');
     });
 
     test('Dockerfile should have test stage', () {
       // Verify the Dockerfile has a test stage defined
       // Stage should run: flutter test --no-pub --coverage
-      expect(true, isTrue, reason: 'Test stage should be defined in Dockerfile');
+      expect(true, isTrue,
+          reason: 'Test stage should be defined in Dockerfile');
     });
 
     test('Dockerfile should have pipeline stage', () {
       // Verify the Dockerfile has a pipeline stage that runs all stages
-      expect(true, isTrue, reason: 'Pipeline stage should be defined in Dockerfile');
+      expect(true, isTrue,
+          reason: 'Pipeline stage should be defined in Dockerfile');
     });
   });
 
   group('Docker Compose Tests', () {
     test('docker-compose should have lint service', () {
       // Verify docker-compose.yml has lint service defined
-      expect(true, isTrue, reason: 'Lint service should be defined in docker-compose.yml');
+      expect(true, isTrue,
+          reason: 'Lint service should be defined in docker-compose.yml');
     });
 
     test('docker-compose should have analyze service', () {
       // Verify docker-compose.yml has analyze service defined
-      expect(true, isTrue, reason: 'Analyze service should be defined in docker-compose.yml');
+      expect(true, isTrue,
+          reason: 'Analyze service should be defined in docker-compose.yml');
     });
 
     test('docker-compose should have test service', () {
       // Verify docker-compose.yml has test service defined
-      expect(true, isTrue, reason: 'Test service should be defined in docker-compose.yml');
+      expect(true, isTrue,
+          reason: 'Test service should be defined in docker-compose.yml');
     });
 
     test('docker-compose should have pipeline service', () {
       // Verify docker-compose.yml has pipeline service defined
-      expect(true, isTrue, reason: 'Pipeline service should be defined in docker-compose.yml');
+      expect(true, isTrue,
+          reason: 'Pipeline service should be defined in docker-compose.yml');
     });
   });
 
@@ -99,7 +111,8 @@ void main() {
 
     test('Makefile should have analyze target', () {
       // Verify Makefile has analyze target defined
-      expect(true, isTrue, reason: 'Analyze target should be defined in Makefile');
+      expect(true, isTrue,
+          reason: 'Analyze target should be defined in Makefile');
     });
 
     test('Makefile should have test target', () {
@@ -114,14 +127,16 @@ void main() {
 
     test('Makefile should have docker targets', () {
       // Verify Makefile has docker targets defined
-      expect(true, isTrue, reason: 'Docker targets should be defined in Makefile');
+      expect(true, isTrue,
+          reason: 'Docker targets should be defined in Makefile');
     });
   });
 
   group('Pre-commit Config Tests', () {
     test('pre-commit config should have trailing-whitespace hook', () {
       // Verify .pre-commit-config.yaml has trailing-whitespace hook defined
-      expect(true, isTrue, reason: 'Trailing whitespace hook should be defined');
+      expect(true, isTrue,
+          reason: 'Trailing whitespace hook should be defined');
     });
 
     test('pre-commit config should have end-of-file-fixer hook', () {
@@ -148,7 +163,8 @@ void main() {
   group('GitHub Actions Tests', () {
     test('local-docker-ci.yml should have workflow_dispatch trigger', () {
       // Verify local-docker-ci.yml has workflow_dispatch trigger defined
-      expect(true, isTrue, reason: 'Workflow dispatch trigger should be defined');
+      expect(true, isTrue,
+          reason: 'Workflow dispatch trigger should be defined');
     });
 
     test('local-docker-ci.yml should have stage input', () {
@@ -175,12 +191,14 @@ void main() {
 
     test('pre-commit hook should handle coverage report missing', () {
       // Verify pre-commit hook handles missing coverage report gracefully
-      expect(true, isTrue, reason: 'Pre-commit hook should handle missing coverage');
+      expect(true, isTrue,
+          reason: 'Pre-commit hook should handle missing coverage');
     });
 
     test('pre-commit hook should handle coverage threshold not met', () {
       // Verify pre-commit hook fails when coverage threshold not met
-      expect(true, isTrue, reason: 'Pre-commit hook should fail on low coverage');
+      expect(true, isTrue,
+          reason: 'Pre-commit hook should fail on low coverage');
     });
   });
 }

@@ -1,61 +1,89 @@
 # Pre-commit configuration for OpenCloset
-# This file defines hooks that run before each commit
+# This file defines hooks that run automatically before each git commit
+#
+# Configuration Structure:
+# - Global hooks from pre-commit-hooks repository (formatting, trailing whitespace, etc.)
+# - Local hooks that run custom Makefile targets (lint, analyze, test)
+# - Pre-commit hook script that provides detailed step-by-step execution
+#
+# Usage:
+#   1. Install pre-commit: pip install pre-commit
+#   2. Initialize hooks: pre-commit install
+#   3. Run hooks manually: pre-commit run --all-files
+#
+# Note: The 'pre-commit-hook' local hook is an alternative manual execution
+#       mode. Each individual hook (flutter-lint, flutter-analyze, flutter-test)
+#       can also be run independently for specific checks.
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
       - id: trailing-whitespace
-        # Ignore Flutter generated files
+        # Ignores Flutter-generated files to avoid conflicts with localization and build artifacts
         exclude: 'lib/generated_l10n|build|\.dart_tool'
       - id: end-of-file-fixer
+        # Ensures all files end with a single newline character
         exclude: 'lib/generated_l10n|build|\.dart_tool'
       - id: check-yaml
+        # Validates YAML syntax in all YAML files (prevents broken configurations)
       - id: check-added-large-files
+        # Prevents accidentally committing large files (>150KB)
         args: ['--maxkb=150']
 
   - repo: local
     hooks:
-      # Lint hook - runs Flutter format check
+      # =============================================================================
+      # Local Hooks - Custom CI checks integrated into pre-commit workflow
+      # =============================================================================
+      
+      # Lint hook - runs Flutter format check and analyze
+      # Ensures code follows Dart formatting guidelines and has no static analysis issues
       - id: flutter-lint
         name: Flutter Lint (Format)
         entry: make lint
         language: system
         pass_filenames: false
         always_run: true
-        description: 'Run Flutter format check before committing'
+        description: 'Run Flutter format check and analyze before committing'
 
       # Analyze hook - runs Flutter analyze
+      # Detects potential problems in the codebase (unused code, API misuses, etc.)
       - id: flutter-analyze
         name: Flutter Analyze
         entry: make analyze
         language: system
         pass_filenames: false
         always_run: true
-        description: 'Run Flutter analyze before committing'
+        description: 'Run Flutter static analysis before committing'
 
-      # Test hook - runs Flutter tests
+      # Test hook - runs Flutter tests with coverage
+      # Executes all unit tests and generates coverage report
       - id: flutter-test
         name: Flutter Test
         entry: make test
         language: system
         pass_filenames: false
         always_run: true
-        description: 'Run Flutter tests before committing'
+        description: 'Run Flutter unit tests and coverage before committing'
 
-      # Pre-commit hook script - alternative to pre-commit
+      # Pre-commit hook script - comprehensive alternative to individual hooks
+      # Provides detailed step-by-step execution with progress indicators
+      # Useful for manual execution or when individual hooks are insufficient
       - id: pre-commit-hook
         name: OpenCloset Pre-commit Hook
         entry: |
           #!/bin/bash
           set -e
           
-          # Use full path to flutter binary
-          FLUTTER="/home/user/develop/flutter/bin/flutter"
+          # Cross-platform Flutter path detection
+          # Falls back to default location if not found in standard path
+          FLUTTER="$(which flutter 2>/dev/null || echo "/usr/bin/flutter")"
           
           echo "=== Running OpenCloset Pre-commit Hook ==="
           echo ""
           
+          # Step 1: Format Check - Validates code follows Dart formatting guidelines
           echo "1. Running Flutter format check..."
           $FLUTTER pub get
           if $FLUTTER --version 2>/dev/null | grep -q "3."; then
@@ -65,17 +93,20 @@ repos:
             echo "   ⚠️  Skipping format check (Flutter format not available)"
           fi
           
+          # Step 2: Static Analysis - Detects code issues and potential problems
           echo ""
           echo "2. Running Flutter analyze..."
           $FLUTTER analyze || exit 1
           echo "   ✅ Analysis completed"
           
+          # Step 3: Unit Tests - Executes all tests with coverage data
           echo ""
           echo "3. Running Flutter tests..."
           $FLUTTER pub get
           $FLUTTER test --no-pub --coverage || exit 1
           echo "   ✅ Tests completed"
           
+          # Step 4: Coverage Threshold - Ensures code coverage meets minimum requirement
           echo ""
           echo "4. Checking coverage threshold..."
           COVERAGE_THRESHOLD="${COVERAGE_THRESHOLD:-80}"
@@ -83,12 +114,14 @@ repos:
           TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
           TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
           COVERAGE_RESULT=$(python3 -c "print(round((int('$TOTAL_HITS') / int('$TOTAL_FILE')) * 100, 1) if int('$TOTAL_FILE') > 0 else 0)")
+          # Validate coverage result was successfully parsed
           if [ -z "$COVERAGE_RESULT" ]; then
             echo "❌ Error: Could not parse coverage result from lcov.info"
             echo "   Expected LF/LH format in file"
             exit 1
           fi
           COVERAGE_MET=$(python3 -c "print(1 if float('$COVERAGE_RESULT') >= float('$COVERAGE_THRESHOLD') else 0)")
+          # Check if coverage meets the minimum threshold requirement
           if [ "$COVERAGE_MET" -eq 1 ]; then
             echo "   ✅ Coverage check passed: ${COVERAGE_RESULT}% >= ${COVERAGE_THRESHOLD}%"
           else
@@ -104,3 +137,4 @@ repos:
         pass_filenames: false
         always_run: true
         files: '\.dart$'
+        # Note: Only runs on Dart files (.dart) to avoid unnecessary checks on other file types

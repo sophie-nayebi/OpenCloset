@@ -73,7 +73,7 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
   /// Whether dark mode is active based on platform brightness.
   static bool _getIsDarkMode() =>
       WidgetsBinding.instance.platformDispatcher.platformBrightness ==
-          Brightness.dark;
+      Brightness.dark;
 
   /// Creates a new [AppThemeNotifier] instance.
   ///
@@ -89,9 +89,7 @@ class AppThemeNotifier extends StateNotifier<AppThemeState> {
             isDark: _getIsDarkMode(),
             colorScheme: ColorScheme.fromSeed(
               seedColor: ThemeConfig.seedColor,
-              brightness: _getIsDarkMode()
-                  ? Brightness.dark
-                  : Brightness.light,
+              brightness: _getIsDarkMode() ? Brightness.dark : Brightness.light,
             ),
             themeMode: ThemeMode.system,
             lightScheme: lightScheme,

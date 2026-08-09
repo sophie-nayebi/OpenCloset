@@ -72,5 +72,6 @@ class ThemeConfig {
   ///
   /// Returns the [darkScheme] when [isDark] is true,
   /// and [lightScheme] otherwise.
-  static ColorScheme getScheme(bool isDark) => isDark ? darkScheme : lightScheme;
+  static ColorScheme getScheme(bool isDark) =>
+      isDark ? darkScheme : lightScheme;
 }

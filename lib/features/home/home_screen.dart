@@ -52,7 +52,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Center(
         child: Semantics(
-          label: 'Home screen - Main landing page of the application. Tap the app icon or settings icon to navigate.',
+          label:
+              'Home screen - Main landing page of the application. Tap the app icon or settings icon to navigate.',
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -75,7 +76,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Semantics(
-                    label: 'Settings - Navigate to settings page to configure app preferences, view about information, and export data.',
+                    label:
+                        'Settings - Navigate to settings page to configure app preferences, view about information, and export data.',
                     child: _buildNavigationButton(
                       icon: Icons.settings,
                       label: 'Settings',
@@ -91,7 +93,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(width: 16),
                   Semantics(
-                    label: 'Toggle Theme - Switch between light and dark mode for the app.',
+                    label:
+                        'Toggle Theme - Switch between light and dark mode for the app.',
                     child: _buildNavigationButton(
                       icon: Icons.light_mode,
                       label: 'Toggle Theme',

@@ -32,7 +32,8 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('settings route renders correctly', (WidgetTester tester) async {
+    testWidgets('settings route renders correctly',
+        (WidgetTester tester) async {
       // Create a fresh router instance with settings as initial location
       final router = TestRouter.create(initialLocation: '/settings');
 
@@ -47,7 +48,8 @@ void main() {
       expect(find.text('Settings'), findsOneWidget);
     });
 
-    testWidgets('404 route exists and can be accessed', (WidgetTester tester) async {
+    testWidgets('404 route exists and can be accessed',
+        (WidgetTester tester) async {
       // Create a fresh router instance
       final router = TestRouter.create();
 
@@ -72,7 +74,8 @@ void main() {
       expect(find.text('Page Not Found'), findsOneWidget);
     });
 
-    testWidgets('router starts at home route by default', (WidgetTester tester) async {
+    testWidgets('router starts at home route by default',
+        (WidgetTester tester) async {
       final router = TestRouter.create(initialLocation: '/');
 
       // Build with test router (starts at home by default)
@@ -86,7 +89,8 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('router can navigate to settings route', (WidgetTester tester) async {
+    testWidgets('router can navigate to settings route',
+        (WidgetTester tester) async {
       final router = TestRouter.create(initialLocation: '/');
 
       // Build with test router (starts at home by default)
@@ -108,7 +112,8 @@ void main() {
       expect(find.text('Settings'), findsOneWidget);
     });
 
-    testWidgets('router supports named navigation', (WidgetTester tester) async {
+    testWidgets('router supports named navigation',
+        (WidgetTester tester) async {
       final router = TestRouter.create();
 
       // Build with test router (starts at home by default)

@@ -27,7 +27,7 @@ void main() {
         seedColor: ThemeConfig.seedColor,
         brightness: Brightness.light,
       );
-      
+
       expect(lightScheme.primary, isNotNull);
       expect(lightScheme.secondary, isNotNull);
       expect(lightScheme.onPrimary, isNotNull);
@@ -38,7 +38,7 @@ void main() {
         seedColor: ThemeConfig.seedColor,
         brightness: Brightness.dark,
       );
-      
+
       expect(darkScheme.primary, isNotNull);
       expect(darkScheme.secondary, isNotNull);
       expect(darkScheme.onPrimary, isNotNull);
@@ -49,12 +49,12 @@ void main() {
         seedColor: ThemeConfig.seedColor,
         brightness: Brightness.light,
       );
-      
+
       final darkScheme = ColorScheme.fromSeed(
         seedColor: ThemeConfig.seedColor,
         brightness: Brightness.dark,
       );
-      
+
       expect(lightScheme.primary, isNot(equals(darkScheme.primary)));
       expect(lightScheme.secondary, isNot(equals(darkScheme.secondary)));
     });
