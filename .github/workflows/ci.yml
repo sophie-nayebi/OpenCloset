@@ -114,17 +114,27 @@ jobs:
 
       - name: Check coverage threshold
         run: |
-          COVERAGE_THRESHOLD="${{ env.COVERAGE_THRESHOLD }}"
           # Parse coverage from lcov.info using LF/LH pairs (Flutter's format)
-          TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info | sed 's/LF://' || echo "0")
-          TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info | sed 's/LH://' || echo "0")
-          COVERAGE_RESULT=$(python3 -c "print(round((int('$TOTAL_HITS') / int('$TOTAL_FILE')) * 100, 1) if int('$TOTAL_FILE') > 0 else 0)")
+          TOTAL_FILE=$(grep -m1 "^LF:" coverage/lcov.info 2>/dev/null | sed 's/LF://' || echo "0")
+          TOTAL_HITS=$(grep -m1 "^LH:" coverage/lcov.info 2>/dev/null | sed 's/LH://' || echo "0")
+          # Use Python for robust calculation with proper variable handling
+          COVERAGE_RESULT=$(python3 << EOF
+total_file = int("${TOTAL_FILE:-0}")
+total_hits = int("${TOTAL_HITS:-0}")
+if total_file > 0:
+    print(round((total_hits / total_file) * 100, 1))
+else:
+    print(0)
+EOF
+          )
           if [ -z "$COVERAGE_RESULT" ]; then
             echo "❌ Error: Could not parse coverage result from lcov.info"
             echo "   Expected LF/LH format in file"
             exit 1
           fi
-          if [ $(python3 -c "print(1 if float('$COVERAGE_RESULT') < float('$COVERAGE_THRESHOLD') else 0)") -eq 1 ]; then
+          # Compare coverage with threshold
+          COVERAGE_MET=$(python3 -c "print(1 if float('$COVERAGE_RESULT') >= float('${{ env.COVERAGE_THRESHOLD }}') else 0)")
+          if [ "$COVERAGE_MET" -eq 0 ]; then
             echo "❌ Coverage check failed: ${COVERAGE_RESULT}% < ${COVERAGE_THRESHOLD}%"
             echo "   Current coverage: ${COVERAGE_RESULT}%"
             echo "   Required coverage: ${COVERAGE_THRESHOLD}%"

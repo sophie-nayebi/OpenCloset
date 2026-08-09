@@ -110,7 +110,6 @@ docker-all:
 clean:
 	@echo "=== Cleaning build artifacts ==="
 	-rm -rf .dart_tool
-	# Note: pubspec.lock is intentionally NOT removed to avoid breaking the build
 	-rm -rf packages/**/.dart_tool
 	-rm -rf packages/**/pubspec.lock
 	-rm -rf .pub-cache
