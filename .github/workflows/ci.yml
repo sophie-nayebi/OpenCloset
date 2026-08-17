@@ -12,36 +12,31 @@ concurrency:
   group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  FLUTTER_VERSION: stable
-  COVERAGE_THRESHOLD: 80
-
 jobs:
   build-pipeline:
     name: Build Pipeline
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build pipeline image
-        run: |
-          docker build \
-            --cache-to type=gha,mode=max,size=10G \
-            --target pipeline \
-            -t open-closet:pipeline \
-            --progress=plain \
-            -f Dockerfile \
-            .
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.24.0'
 
-      - name: Run pipeline stage with Docker
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/workspace \
-            --workdir /workspace \
-            open-closet:pipeline
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run format check
+        run: flutter format --set-exit-if-changed .
+
+      - name: Run analyzer
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test --no-pub --coverage
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
