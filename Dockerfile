@@ -1,14 +1,14 @@
 # Dockerfile for OpenCloset Local CI/CD Pipeline
 # Multi-stage build with shared base image for lint, analyze, and test stages
 
-FROM flutter:3.24.0 AS base
+FROM ubuntu:24.04 AS base
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PUBLISH_DIR=/publish
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install Flutter and dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     make \
     pkg-config \
@@ -34,39 +34,47 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-dev \
     libxkbcommon-dev \
     libvulkan-dev \
-    && rm -rf /var/lib/apt/lists/*
+    wget \
+    curl \
+    unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -o /tmp/flutter.tar.xz \
+    && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
+    && rm /tmp/flutter.tar.xz \
+    && /root/flutter/bin/flutter config --no-analytics \
+    && /root/flutter/bin/flutter precache --release --verbose
 
 # =============================================================================
 # Stage: Lint Stage
 # =============================================================================
 FROM base AS lint
 WORKDIR /workspace
-RUN flutter pub get
-CMD flutter format --set-exit-if-changed .
+RUN /root/flutter/bin/flutter pub get
+CMD /root/flutter/bin/flutter format --set-exit-if-changed .
 
 # =============================================================================
 # Stage: Analyze Stage
 # =============================================================================
 FROM base AS analyze
 WORKDIR /workspace
-RUN flutter pub get
-CMD flutter analyze --no-fatal-infos
+RUN /root/flutter/bin/flutter pub get
+CMD /root/flutter/bin/flutter analyze --no-fatal-infos
 
 # =============================================================================
 # Stage: Test Stage
 # =============================================================================
 FROM base AS test
 WORKDIR /workspace
-RUN flutter pub get
-CMD flutter test --no-pub --coverage
+RUN /root/flutter/bin/flutter pub get
+CMD /root/flutter/bin/flutter test --no-pub --coverage
 
 # =============================================================================
 # Stage: Full Pipeline (All stages)
 # =============================================================================
 FROM base AS pipeline
 WORKDIR /workspace
-RUN flutter pub get && \
-    flutter format --set-exit-if-changed . && \
-    flutter analyze --no-fatal-infos && \
-    flutter test --no-pub --coverage
+RUN /root/flutter/bin/flutter pub get && \
+    /root/flutter/bin/flutter format --set-exit-if-changed . && \
+    /root/flutter/bin/flutter analyze --no-fatal-infos && \
+    /root/flutter/bin/flutter test --no-pub --coverage
 CMD ["echo", "Pipeline completed successfully"]
