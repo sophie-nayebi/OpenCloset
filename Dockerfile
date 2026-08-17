@@ -76,17 +76,8 @@ CMD $FLUTTER_ROOT/bin/flutter test --no-pub --coverage
 # =============================================================================
 FROM base AS pipeline
 WORKDIR /workspace
-RUN $FLUTTER_ROOT/bin/flutter pub get
-# Create a script to run all stages sequentially
-RUN export PATH="$FLUTTER_ROOT/bin:$PATH" && \
-    echo '#!/bin/bash' > /run-pipeline.sh && \
-    echo 'set -e' >> /run-pipeline.sh && \
-    echo 'echo "=== Running Lint ==="' >> /run-pipeline.sh && \
-    echo 'flutter format --set-exit-if-changed .' >> /run-pipeline.sh && \
-    echo 'echo "=== Running Analyze ==="' >> /run-pipeline.sh && \
-    echo 'flutter analyze --no-fatal-infos' >> /run-pipeline.sh && \
-    echo 'echo "=== Running Tests ==="' >> /run-pipeline.sh && \
-    echo 'flutter test --no-pub --coverage' >> /run-pipeline.sh && \
-    echo 'echo "=== All stages completed successfully ==="' >> /run-pipeline.sh && \
-    chmod +x /run-pipeline.sh
-CMD ["/run-pipeline.sh"]
+RUN $FLUTTER_ROOT/bin/flutter pub get && \
+    $FLUTTER_ROOT/bin/flutter format --set-exit-if-changed . && \
+    $FLUTTER_ROOT/bin/flutter analyze --no-fatal-infos && \
+    $FLUTTER_ROOT/bin/flutter test --no-pub --coverage
+CMD ["echo", "Pipeline completed successfully"]
