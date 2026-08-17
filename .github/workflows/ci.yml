@@ -33,11 +33,11 @@ jobs:
         uses: docker/setup-docker-action@v4
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2.23.0
+        uses: subosito/flutter-action@v2
         with:
-          channel: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          flutter-version: '3.19.0'
           cache: true
-          cache-path: ~/.cache/flutter/pub
 
       - name: Install Flutter dependencies
         run: flutter pub get
