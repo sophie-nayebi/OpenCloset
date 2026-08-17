@@ -39,8 +39,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Flutter
-RUN curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz | \
-    tar -xf - -C /root/flutter --strip-components=1
+RUN apt-get update && apt-get install -y --no-install-recommends wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
+    && tar -xf /tmp/flutter.tar.xz -C /root/flutter --strip-components=1 \
+    && rm /tmp/flutter.tar.xz
 
 # =============================================================================
 # Stage: Lint Stage
