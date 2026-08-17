@@ -1,15 +1,14 @@
 # Dockerfile for OpenCloset Local CI/CD Pipeline
 # Multi-stage build with shared base image for lint, analyze, and test stages
 
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV FLUTTER_VERSION=stable
-ENV PATH="/root/flutter/bin:$PATH"
-ENV FLUTTER_ROOT=/root/flutter
+ENV PATH="/root/.pub-cache/bin:$PATH"
+ENV PUBLISH_DIR=/publish
 
-# Install system dependencies
+# Install Flutter and dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -37,15 +36,15 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-dev \
     libxkbcommon-dev \
     libvulkan-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Flutter
-RUN apt-get update && apt-get install -y --no-install-recommends wget \
+    wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /root/flutter /root/.pub-cache /tmp/flutter.tar.xz \
-    && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
+    && curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -o /tmp/flutter.tar.xz \
     && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
-    && rm /tmp/flutter.tar.xz
+    && rm /tmp/flutter.tar.xz \
+    && /root/flutter/bin/flutter config --no-analytics \
+    && /root/flutter/bin/flutter precache --release \
+    && /root/flutter/bin/flutter doctor
 
 # =============================================================================
 # Stage: Lint Stage
