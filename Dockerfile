@@ -41,10 +41,9 @@ RUN apt-get update && apt-get install -y \
 # Install Flutter
 RUN apt-get update && apt-get install -y --no-install-recommends wget \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /root/flutter \
+    && rm -rf /root/flutter /tmp/flutter.tar.xz \
     && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
-    && mkdir -p /root/flutter \
-    && tar -xf /tmp/flutter.tar.xz -C /root/flutter --strip-components=1 \
+    && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
     && rm /tmp/flutter.tar.xz
 
 # =============================================================================
