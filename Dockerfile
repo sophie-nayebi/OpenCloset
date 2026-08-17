@@ -45,7 +45,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget \
     && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
     && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
     && rm /tmp/flutter.tar.xz \
-    && flutter precache --release
+    && chmod +x /root/flutter/bin/flutter \
+    && export PATH="/root/flutter/bin:$PATH" && flutter --version
 
 # =============================================================================
 # Stage: Lint Stage
