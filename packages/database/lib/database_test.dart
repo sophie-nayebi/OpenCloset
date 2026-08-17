@@ -5,52 +5,54 @@ import 'dart:io';
 void main() {
   setUpAll(() async {
     // Clean up any existing test directories
+    // Note: Empty catch blocks are intentional for cleanup operations
     try {
       await Directory('/tmp/test_db').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/test_db2').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/csv_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test101').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test102').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test101').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test102').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
   });
 
   tearDownAll(() async {
     // Clean up test directories after all tests
+    // Note: Empty catch blocks are intentional for cleanup operations
     try {
       await Directory('/tmp/test_db').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/test_db2').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/csv_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
   });
 
   test('should create database instance', () {
@@ -401,12 +403,12 @@ void main() {
         outfitId: 'outfit1',
         itemId: 'item2',
       );
-      
+
       final outfitItemsBefore = await db.readAllOutfitItems();
       expect(outfitItemsBefore.length, 2);
-      
+
       await db.deleteOutfit('outfit1');
-      
+
       final outfitItemsAfter = await db.readAllOutfitItems();
       expect(outfitItemsAfter.length, 0);
     });
@@ -423,13 +425,13 @@ void main() {
         outfitId: 'outfit1',
         itemId: 'item1',
       );
-      
+
       await db.deleteOutfit('outfit1');
-      
+
       // The outfit should be deleted
       final outfits = await db.readAllOutfits();
       expect(outfits.length, 0);
-      
+
       // No orphaned entries should exist
       final outfitItems = await db.readAllOutfitItems();
       expect(outfitItems.length, 0);
@@ -447,7 +449,7 @@ void main() {
           description: 'Description $i',
         );
       }
-      
+
       final categories = await db.readAllCategories();
       expect(categories.length, 10);
     });
@@ -460,7 +462,7 @@ void main() {
         name: 'Category 1',
         description: 'Description 1',
       );
-      
+
       for (int i = 0; i < 10; i++) {
         await db.updateCategory(
           id: 'cat1',
@@ -468,7 +470,7 @@ void main() {
           description: 'Description $i',
         );
       }
-      
+
       final category = await db.readCategoryById('cat1');
       expect(category?['description'], 'Description 9');
     });

@@ -15,3 +15,4 @@
 ///
 /// Image processed = await ImageProcessor.removeBackground(sourceImage);
 /// ```
+library;

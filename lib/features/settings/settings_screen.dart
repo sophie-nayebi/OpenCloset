@@ -33,13 +33,15 @@ class SettingsScreen extends ConsumerWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          const Text('Theme:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          const Text('Theme:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
           const SizedBox(width: 16),
           GestureDetector(
             onTap: () => ref.read(themeProvider).toggleTheme(),
             child: Container(
               key: const Key('theme-toggle'),
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.inversePrimary,
                 borderRadius: BorderRadius.circular(20.0),
@@ -52,8 +54,11 @@ class SettingsScreen extends ConsumerWidget {
                       : const Icon(Icons.light_mode, size: 20.0),
                   const SizedBox(width: 4),
                   Text(
-                    ref.watch(themeProvider).themeMode == ThemeMode.dark ? 'Dark' : 'Light',
-                    style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+                    ref.watch(themeProvider).themeMode == ThemeMode.dark
+                        ? 'Dark'
+                        : 'Light',
+                    style:
+                        TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -82,21 +87,29 @@ class SettingsScreen extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(top: 16.0, bottom: 8.0),
       child: Semantics(
-        label: 'About OpenCloset - Version 1.0.0, All your data belongs to you. Open source project on GitHub.',
+        label:
+            'About OpenCloset - Version 1.0.0, All your data belongs to you. Open source project on GitHub.',
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.inversePrimary.withValues(alpha: 0.1),
+            color: Theme.of(context)
+                .colorScheme
+                .inversePrimary
+                .withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('About OpenCloset', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+              const Text('About OpenCloset',
+                  style:
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8.0),
-              const Text('Version 1.0.0', style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+              const Text('Version 1.0.0',
+                  style: TextStyle(fontSize: 14.0, color: Colors.grey)),
               const SizedBox(height: 4.0),
-              const Text('All your data belongs to you', style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+              const Text('All your data belongs to you',
+                  style: TextStyle(fontSize: 14.0, color: Colors.grey)),
               const SizedBox(height: 12.0),
               InkWell(
                 onTap: () {
@@ -107,7 +120,11 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.code, color: Colors.blue, size: 18),
                     const SizedBox(width: 8),
-                    const Text('View on GitHub', style: TextStyle(fontSize: 14.0, color: Colors.blue, fontWeight: FontWeight.w500)),
+                    const Text('View on GitHub',
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
@@ -133,7 +150,8 @@ class SettingsScreen extends ConsumerWidget {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Export Feature'),
-                  content: const Text('The export feature is currently disabled. This feature will be available in a future update.'),
+                  content: const Text(
+                      'The export feature is currently disabled. This feature will be available in a future update.'),
                   actions: [
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context),
@@ -154,9 +172,12 @@ class SettingsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Export Data', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
+                      const Text('Export Data',
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w500)),
                       const SizedBox(height: 4.0),
-                      const Text('Coming soon', style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+                      const Text('Coming soon',
+                          style: TextStyle(fontSize: 14.0, color: Colors.grey)),
                     ],
                   ),
                 ),

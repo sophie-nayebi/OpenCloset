@@ -12,23 +12,17 @@
 /// );
 /// ```
 
-import 'package:flutter/material.dart';
+import 'package:opencloset/shared/constants/theme_config.dart';
 
 /// Application color scheme.
 ///
 /// This class provides the default color schemes for the application.
-/// The actual color scheme instances are defined in bootstrap.dart to avoid
+/// The actual color scheme instances are defined in [ThemeConfig] to avoid
 /// duplication and ensure consistent color usage.
 class AppColorScheme {
   /// Light color scheme.
-  static final light = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF6750A4),
-    brightness: Brightness.light,
-  );
+  static final light = ThemeConfig.lightScheme;
 
   /// Dark color scheme.
-  static final dark = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF6750A4),
-    brightness: Brightness.dark,
-  );
+  static final dark = ThemeConfig.darkScheme;
 }

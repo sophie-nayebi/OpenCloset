@@ -17,7 +17,7 @@ void main() {
     final itemsPath = getItemsPath();
     final outfitsPath = getOutfitsPath();
     final outfitItemsPath = getOutfitItemsPath();
-    
+
     expect(categoriesPath, endsWith('categories.csv'));
     expect(itemsPath, endsWith('items.csv'));
     expect(outfitsPath, endsWith('outfits.csv'));

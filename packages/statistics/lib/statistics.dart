@@ -15,3 +15,4 @@
 ///
 /// List<ChartData> stats = await StatisticsService.calculate();
 /// ```
+library;

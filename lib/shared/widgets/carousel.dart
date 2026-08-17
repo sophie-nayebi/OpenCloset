@@ -41,7 +41,8 @@ class _CarouselPageState extends State<CarouselPage> {
 
   void _previousPage() {
     if (widget.imageUrls.isEmpty) return;
-    final prevIndex = (_currentPage - 1 + widget.imageUrls.length) % widget.imageUrls.length;
+    final prevIndex =
+        (_currentPage - 1 + widget.imageUrls.length) % widget.imageUrls.length;
     _pageController.animateToPage(
       prevIndex,
       duration: const Duration(milliseconds: 300),
@@ -161,9 +162,7 @@ class _CarouselPageState extends State<CarouselPage> {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Semantics(
-            label: icon == Icons.chevron_left
-                ? 'Previous'
-                : 'Next',
+            label: icon == Icons.chevron_left ? 'Previous' : 'Next',
             child: Icon(icon, color: const Color(0xFF212121), size: 28),
           ),
         ),
@@ -192,9 +191,11 @@ class _EmptyCarousel extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.image_not_supported_outlined, size: 64, color: Colors.grey),
+            Icon(Icons.image_not_supported_outlined,
+                size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('No Images', style: TextStyle(fontSize: 20, color: Colors.grey)),
+            Text('No Images',
+                style: TextStyle(fontSize: 20, color: Colors.grey)),
           ],
         ),
       ),

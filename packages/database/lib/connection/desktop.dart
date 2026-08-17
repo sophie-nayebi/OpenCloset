@@ -10,7 +10,7 @@ String getNativeDesktopPath() {
   } else if (Platform.isLinux) {
     return _getLinuxPath();
   }
-  
+
   return '/desktop/data';
 }
 
@@ -19,13 +19,13 @@ String _getWindowsPath() {
   try {
     final appData = Platform.environment['APPDATA'];
     final userProfile = Platform.environment['USERPROFILE'];
-    
+
     if (appData != null) {
       return '$appData/OpenCloset/data';
     } else if (userProfile != null) {
       return '$userProfile/Documents/OpenCloset/data';
     }
-    
+
     return '/Desktop/OpenCloset/data';
   } catch (e) {
     return '/windows/data';

@@ -16,3 +16,4 @@
 ///
 /// ColorScheme themeColors = AppColors.lightScheme;
 /// ```
+library;

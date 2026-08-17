@@ -10,10 +10,12 @@ import 'package:opencloset/features/settings/settings_screen.dart';
 import 'package:opencloset/app/bootstrap.dart';
 
 void main() {
-  testWidgets('Settings screen has proper AppBar with title', (tester) async {
+  testWidgets('Settings screen has proper AppBar with title', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -34,10 +36,12 @@ void main() {
     expect(appBar.title, isNotNull);
   });
 
-  testWidgets('Settings screen has theme toggle button', (tester) async {
+  testWidgets('Settings screen has theme toggle button', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -55,10 +59,12 @@ void main() {
     expect(themeToggleFinder, findsOneWidget);
   });
 
-  testWidgets('Settings screen has about section', (tester) async {
+  testWidgets('Settings screen has about section', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -76,10 +82,12 @@ void main() {
     expect(aboutFinder, findsOneWidget);
   });
 
-  testWidgets('Settings screen has export option', (tester) async {
+  testWidgets('Settings screen has export option', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -97,10 +105,12 @@ void main() {
     expect(exportOptionFinder, findsOneWidget);
   });
 
-  testWidgets('Settings screen has theme toggle button', (tester) async {
+  testWidgets('Settings screen has theme toggle button', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -118,10 +128,12 @@ void main() {
     expect(themeToggleFinder, findsOneWidget);
   });
 
-  testWidgets('Settings screen theme toggle is interactive', (tester) async {
+  testWidgets('Settings screen theme toggle is interactive', (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(
@@ -139,10 +151,13 @@ void main() {
     expect(themeToggleFinder, findsOneWidget);
   });
 
-  testWidgets('Settings screen has ElevatedButton for GitHub link', (tester) async {
+  testWidgets('Settings screen has ElevatedButton for GitHub link',
+      (final tester) async {
     final notifier = AppThemeNotifier(
-      lightScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
-      darkScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
+      lightScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.light),
+      darkScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6750A4), brightness: Brightness.dark),
     );
 
     await tester.pumpWidget(

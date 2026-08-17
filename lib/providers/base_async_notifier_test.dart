@@ -35,13 +35,13 @@ class _TestDataProvider extends async_notifier.AsyncNotifier<String> {
     _shouldFail = value;
   }
 
-@override
-async_notifier.AsyncState<String> build() =>
+  @override
+  async_notifier.AsyncState<String> build() =>
       async_notifier.AsyncState.loading();
 }
 
 void main() {
-test('AsyncState.loading() creates a loading state', () {
+  test('AsyncState.loading() creates a loading state', () {
     final state = async_notifier.AsyncState.loading();
 
     expect(state.loading, isTrue);
@@ -66,7 +66,7 @@ test('AsyncState.loading() creates a loading state', () {
     const Exception error = Exception('Simulated error');
     final stackTrace = StackTrace();
     final state = async_notifier.AsyncState.error(error, stackTrace);
-    
+
     expect(state.loading, isFalse);
     expect(state.error, isTrue);
     expect(state.data, isFalse);
@@ -74,5 +74,4 @@ test('AsyncState.loading() creates a loading state', () {
     expect(state.loadedError, error);
     expect(state.stackTrace, stackTrace);
   });
-
- }
+}

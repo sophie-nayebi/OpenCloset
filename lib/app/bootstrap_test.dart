@@ -26,7 +26,7 @@ import 'package:opencloset/app/bootstrap.dart'
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('Theme Provider Tests', () {
-    test('theme notifier supports runtime theme changes', () {
+    test('theme provider returns AppThemeNotifier instance', () {
       // This test verifies that the theme provider can be toggled at runtime
       final notifier = AppThemeNotifier(
         lightScheme: ColorScheme.fromSeed(
@@ -48,7 +48,7 @@ void main() {
       expect(notifier.isDark, isTrue);
     });
 
-    test('theme notifier supports setThemeMode', () {
+    test('theme state constructor ensures immutability', () {
       final notifier = AppThemeNotifier(
         lightScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF6750A4),

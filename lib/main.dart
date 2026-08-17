@@ -14,8 +14,14 @@
 /// Import app configuration and entry point.
 export 'app/app.dart';
 export 'app/bootstrap.dart'
-    show themeProvider, userPreferencesProvider, userSettingsProvider,
-          AppThemeState, AppThemeNotifier, UserPreferences, UserSettings;
+    show
+        themeProvider,
+        userPreferencesProvider,
+        userSettingsProvider,
+        AppThemeState,
+        AppThemeNotifier,
+        UserPreferences,
+        UserSettings;
 export 'app/routes.dart';
 export 'app/theme.dart';
 

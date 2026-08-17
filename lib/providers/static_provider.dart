@@ -32,7 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// final version = appVersionProvider.read();
 /// // Returns '0.1.0'
 /// ```
-final appVersionProvider = Provider.value<String>('0.1.0');
+final appVersionProvider = Provider<String>.value('0.1.0');
 
 /// Static app name provider.
 ///
@@ -43,15 +43,15 @@ final appVersionProvider = Provider.value<String>('0.1.0');
 /// final appName = appNameProvider.read();
 /// // Returns 'OpenCloset'
 /// ```
-final appNameProvider = Provider.value<String>('OpenCloset');
+final appNameProvider = Provider<String>.value('OpenCloset');
 
 /// Static feature flag provider.
 ///
 /// Demonstrates how to use static providers for feature flags.
-/// 
+///
 /// Example:
 /// ```dart
-/// final enableAIProvider = Provider.value<bool>(false);
+/// final enableAIProvider = Provider<bool>.value(false);
 /// ```
 /// TODO: replace with real feature flag
-final enableAIProvider = Provider.value<bool>(false);
+final enableAIProvider = Provider<bool>.value(false);

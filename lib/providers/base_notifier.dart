@@ -78,5 +78,5 @@ abstract class BaseNotifier<T> extends Notifier<T> {
   /// This is the core method that determines the provider's value.
   /// The returned value becomes the provider's `state`.
   @override
-  abstract T build();
+  T build();
 }
