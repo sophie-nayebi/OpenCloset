@@ -7,7 +7,7 @@ FROM ubuntu:22.04 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 ENV FLUTTER_VERSION=stable
 ENV PATH="/root/flutter/bin:$PATH"
-ENV FLUTTER_ROOT=/root/flutter/flutter
+ENV FLUTTER_ROOT=/root/flutter
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
