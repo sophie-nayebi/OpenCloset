@@ -7,6 +7,7 @@ FROM ubuntu:22.04 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 ENV FLUTTER_VERSION=stable
 ENV PATH="/root/flutter/bin:$PATH"
+ENV FLUTTER_ROOT=/root/flutter
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -43,50 +44,48 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/flutter /root/.pub-cache /tmp/flutter.tar.xz \
     && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
-    && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
-    && rm /tmp/flutter.tar.xz \
-    && chmod +x /root/flutter/bin/flutter \
-    && export PATH="/root/flutter/bin:$PATH" && flutter --version
+    && tar -xf /tmp/flutter.tar.xz -C /root \
+    && rm /tmp/flutter.tar.xz
 
 # =============================================================================
 # Stage: Lint Stage
 # =============================================================================
 FROM base AS lint
 WORKDIR /workspace
-RUN flutter pub get
-CMD ["flutter", "format", "--set-exit-if-changed", "."]
+RUN $FLUTTER_ROOT/bin/flutter pub get
+CMD $FLUTTER_ROOT/bin/flutter format --set-exit-if-changed .
 
 # =============================================================================
 # Stage: Analyze Stage
 # =============================================================================
 FROM base AS analyze
 WORKDIR /workspace
-RUN flutter pub get
-CMD ["flutter", "analyze", "--no-fatal-infos"]
+RUN $FLUTTER_ROOT/bin/flutter pub get
+CMD $FLUTTER_ROOT/bin/flutter analyze --no-fatal-infos
 
 # =============================================================================
 # Stage: Test Stage
 # =============================================================================
 FROM base AS test
 WORKDIR /workspace
-RUN flutter pub get
-CMD ["flutter", "test", "--no-pub", "--coverage"]
+RUN $FLUTTER_ROOT/bin/flutter pub get
+CMD $FLUTTER_ROOT/bin/flutter test --no-pub --coverage
 
 # =============================================================================
 # Stage: Full Pipeline (All stages)
 # =============================================================================
 FROM base AS pipeline
 WORKDIR /workspace
-RUN flutter pub get
+RUN $FLUTTER_ROOT/bin/flutter pub get
 # Create a script to run all stages sequentially
 RUN echo '#!/bin/bash' > /run-pipeline.sh && \
     echo 'set -e' >> /run-pipeline.sh && \
     echo 'echo "=== Running Lint ==="' >> /run-pipeline.sh && \
-    echo 'flutter format --set-exit-if-changed .' >> /run-pipeline.sh && \
+    echo '$FLUTTER_ROOT/bin/flutter format --set-exit-if-changed .' >> /run-pipeline.sh && \
     echo 'echo "=== Running Analyze ==="' >> /run-pipeline.sh && \
-    echo 'flutter analyze --no-fatal-infos' >> /run-pipeline.sh && \
+    echo '$FLUTTER_ROOT/bin/flutter analyze --no-fatal-infos' >> /run-pipeline.sh && \
     echo 'echo "=== Running Tests ==="' >> /run-pipeline.sh && \
-    echo 'flutter test --no-pub --coverage' >> /run-pipeline.sh && \
+    echo '$FLUTTER_ROOT/bin/flutter test --no-pub --coverage' >> /run-pipeline.sh && \
     echo 'echo "=== All stages completed successfully ==="' >> /run-pipeline.sh && \
     chmod +x /run-pipeline.sh
 CMD ["/run-pipeline.sh"]
