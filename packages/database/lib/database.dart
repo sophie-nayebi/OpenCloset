@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-/// Error thrown when attempting to create a record with a duplicate ID
+/// Error thrown when attempting to create a record with a duplicate ID.
 class DuplicateIdError implements Exception {
   final String id;
   String message;
@@ -153,7 +153,7 @@ class OpenClosetDatabase {
   }) async {
     // Use atomic write with temp file
     final header = 'id,name,description,created_at,updated_at\n';
-    final modifyLines = (String currentLines) {
+    final modifyLines = (final String currentLines) {
       final lines = currentLines.trim().split('\n');
 
       for (int i = 1; i < lines.length; i++) {
@@ -175,10 +175,10 @@ class OpenClosetDatabase {
     await _atomicModifyFile(categoriesFile, header, modifyLines);
   }
 
-  Future<void> deleteCategory(String id) async {
+  Future<void> deleteCategory(final String id) async {
     // Use atomic write with temp file
     final header = 'id,name,description,created_at,updated_at\n';
-    final modifyLines = (String currentLines) {
+    final modifyLines = (final String currentLines) {
       final lines = currentLines.trim().split('\n');
       final filtered = lines
           .skip(1)
@@ -196,13 +196,13 @@ class OpenClosetDatabase {
   /// === Items CRUD ===
 
   Future<void> createItem({
-    required String id,
-    required String name,
-    required String description,
-    required String? categoryId,
-    required String? imageUuid,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    required final String id,
+    required final String name,
+    required final String description,
+    required final String? categoryId,
+    required final String? imageUuid,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) async {
     // Validate ID
     if (!_validateId(id)) {
@@ -281,18 +281,17 @@ class OpenClosetDatabase {
   }
 
   Future<void> updateItem({
-    required String id,
-    required String name,
-    required String description,
-    required String? categoryId,
-    required String? imageUuid,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    required final String id,
+    required final String name,
+    required final String description,
+    required final String? categoryId,
+    required final String? imageUuid,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) async {
     // Use atomic write with temp file
-    final header =
-        'id,name,description,category_id,image_uuid,created_at,updated_at\n';
-    final modifyLines = (String currentLines) {
+    final header = String('id,name,description,category_id,image_uuid,created_at,updated_at\n');
+    final modifyLines = (final String currentLines) {
       final lines = currentLines.trim().split('\n');
 
       for (int i = 1; i < lines.length; i++) {
@@ -314,11 +313,10 @@ class OpenClosetDatabase {
     await _atomicModifyFile(itemsFile, header, modifyLines);
   }
 
-  Future<void> deleteItem(String id) async {
+  Future<void> deleteItem(final String id) async {
     // Use atomic write with temp file
-    final header =
-        'id,name,description,category_id,image_uuid,created_at,updated_at\n';
-    final modifyLines = (String currentLines) {
+    final header = String('id,name,description,category_id,image_uuid,created_at,updated_at\n');
+    final modifyLines = (final String currentLines) {
       final lines = currentLines.trim().split('\n');
       final filtered = lines
           .skip(1)
@@ -336,11 +334,11 @@ class OpenClosetDatabase {
   /// === Outfits CRUD ===
 
   Future<void> createOutfit({
-    required String id,
-    required String name,
-    required String description,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    required final String id,
+    required final String name,
+    required final String description,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) async {
     // Validate ID
     if (!_validateId(id)) {
@@ -361,7 +359,7 @@ class OpenClosetDatabase {
     );
 
     // Ensure file ends with newline before appending
-    final currentContent = await outfitsFile.readAsString();
+    final currentContent = outfitsFile.readAsString();
     final hasTrailingNewline = currentContent.endsWith('\n');
     final contentToWrite =
         hasTrailingNewline ? currentContent : currentContent + '\n';
@@ -371,7 +369,7 @@ class OpenClosetDatabase {
   }
 
   Future<List<Map<String, dynamic>>> readAllOutfits() async {
-    final content = await outfitsFile.readAsString();
+    final content = outfitsFile.readAsString();
     final lines = content.trim().split('\n');
     // Skip header row (first line) and filter out empty lines
     final dataLines = lines
@@ -391,7 +389,7 @@ class OpenClosetDatabase {
   }
 
   Future<Map<String, dynamic>?> readOutfitById(String id) async {
-    final content = await outfitsFile.readAsString();
+    final content = outfitsFile.readAsString();
     final lines = content.trim().split('\n');
     // Skip header row (first line) and filter out empty lines
     final dataLines = lines
@@ -414,15 +412,15 @@ class OpenClosetDatabase {
   }
 
   Future<void> updateOutfit({
-    required String id,
-    required String name,
-    required String description,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    required final String id,
+    required final String name,
+    required final String description,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) async {
     // Use atomic write with temp file
     final header = 'id,name,description,created_at,updated_at\n';
-    final modifyLines = (String currentLines) {
+    final modifyLines = (final String currentLines) {
       final lines = currentLines.trim().split('\n');
 
       for (int i = 1; i < lines.length; i++) {
@@ -444,9 +442,9 @@ class OpenClosetDatabase {
     await _atomicModifyFile(outfitsFile, header, modifyLines);
   }
 
-  Future<void> deleteOutfit(String id) async {
+  Future<void> deleteOutfit(final String id) async {
     // First, delete all associated outfit_items to prevent orphaned entries
-    final outfitItemsContent = await outfitItemsFile.readAsString();
+    final outfitItemsContent = outfitItemsFile.readAsString();
     final outfitItemsLines = outfitItemsContent.trim().split('\n');
     final filteredOutfitItems = outfitItemsLines
         .skip(1)
@@ -463,7 +461,7 @@ class OpenClosetDatabase {
     await tempFile1.renameSync(outfitItemsFile.path);
 
     // Then delete the outfit
-    final outfitsContent = await outfitsFile.readAsString();
+    final outfitsContent = outfitsFile.readAsString();
     final outfitsLines = outfitsContent.trim().split('\n');
     final filteredOutfits = outfitsLines
         .skip(1)
@@ -483,8 +481,8 @@ class OpenClosetDatabase {
   /// === Outfit Items CRUD (Junction Table) ===
 
   Future<void> createOutfitItem({
-    required String outfitId,
-    required String itemId,
+    required final String outfitId,
+    required final String itemId,
   }) async {
     // Validate outfit ID
     if (!_validateId(outfitId)) {
@@ -508,7 +506,7 @@ class OpenClosetDatabase {
   }
 
   Future<List<Map<String, dynamic>>> readAllOutfitItems() async {
-    final content = await outfitItemsFile.readAsString();
+    final content = outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
     // Skip header row (first line) and filter out empty lines
     final dataLines = lines
@@ -526,9 +524,9 @@ class OpenClosetDatabase {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> readOutfitItemByOutfitId(
-      String outfitId) async {
-    final content = await outfitItemsFile.readAsString();
+Future<List<Map<String, dynamic>>> readOutfitItemByOutfitId(
+    final String outfitId) async {
+    final content = outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
     // Skip header row (first line) and filter out empty lines
     final dataLines = lines
@@ -548,9 +546,9 @@ class OpenClosetDatabase {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> readOutfitItemByItemId(
-      String itemId) async {
-    final content = await outfitItemsFile.readAsString();
+Future<List<Map<String, dynamic>>> readOutfitItemByItemId(
+    final String itemId) async {
+    final content = outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
     // Skip header row (first line) and filter out empty lines
     final dataLines = lines
@@ -570,7 +568,7 @@ class OpenClosetDatabase {
     return result;
   }
 
-  Future<void> deleteOutfitItem(String outfitId) async {
+  Future<void> deleteOutfitItem(final String outfitId) async {
     // Read the file content
     final content = await outfitItemsFile.readAsString();
     final lines = content.trim().split('\n');
@@ -601,7 +599,7 @@ class OpenClosetDatabase {
   }
 
   /// Escape a field value for CSV (RFC 4180)
-  String _escapeCSVField(String field) {
+  String _escapeCSVField(final String field) {
     // If field contains comma, newline, or double quote, wrap in quotes
     if (field.contains(',') ||
         field.contains('\n') ||
@@ -616,11 +614,11 @@ class OpenClosetDatabase {
 
   /// Build a CSV line with proper field escaping
   String _buildCSVLine(
-    String id,
-    String name,
-    String description,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    final String id,
+    final String name,
+    final String description,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   ) {
     return [
           _escapeCSVField(id),
@@ -634,13 +632,13 @@ class OpenClosetDatabase {
 
   /// Build an items CSV line with proper field escaping
   String _buildItemCSVLine(
-    String id,
-    String name,
-    String description,
-    String? categoryId,
-    String? imageUuid,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    final String id,
+    final String name,
+    final String description,
+    final String? categoryId,
+    final String? imageUuid,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   ) {
     return [
           _escapeCSVField(id),
@@ -655,7 +653,7 @@ class OpenClosetDatabase {
   }
 
   /// Helper method to parse CSV lines with proper RFC 4180 quoting support
-  List<String> _parseCSVLine(String line) {
+  List<String> _parseCSVLine(final String line) {
     final parts = <String>[];
     final currentPart = <String>[];
     bool inQuotes = false;
@@ -709,12 +707,12 @@ class OpenClosetDatabase {
     return parts.map<String>((p) => p.trim()).toList();
   }
 
-  /// Atomically reads, modifies, and writes a CSV file
-  /// Uses temp file + rename for atomic operation
+/// Atomically reads, modifies, and writes a CSV file
+/// Uses temp file + rename for atomic operation
   Future<void> _atomicModifyFile(
-    File file,
-    String header,
-    Function(String) modifyLines,
+    final File file,
+    final String header,
+    final Function(String) modifyLines,
   ) async {
     // Read file content
     final content = await file.readAsString();
@@ -729,14 +727,14 @@ class OpenClosetDatabase {
     await tempFile.renameSync(file.path);
   }
 
-  /// Validates that an ID is a non-empty string
-  /// For flexibility, we accept any non-empty string as an ID
-  bool _validateId(String id) {
+/// Validates that an ID is a non-empty string.
+/// For flexibility, we accept any non-empty string as an ID.
+  bool _validateId(final String id) {
     return id.isNotEmpty;
   }
 
-  /// Checks if a record with the given ID already exists
-  bool _idExists(File file, String id) {
+/// Checks if a record with the given ID already exists.
+  bool _idExists(final File file, final String id) {
     final content = file.readAsStringSync();
     final lines = content.trim().split('\n');
     for (int i = 1; i < lines.length; i++) {

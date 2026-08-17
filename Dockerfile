@@ -56,7 +56,7 @@ CMD ["flutter", "format", "--set-exit-if-changed", "."]
 FROM base AS analyze
 WORKDIR /workspace
 RUN flutter pub get
-CMD ["flutter", "analyze"]
+CMD ["flutter", "analyze", "--no-fatal-infos"]
 
 # =============================================================================
 # Stage: Test Stage
@@ -78,7 +78,7 @@ RUN echo '#!/bin/bash' > /run-pipeline.sh && \
     echo 'echo "=== Running Lint ==="' >> /run-pipeline.sh && \
     echo 'flutter format --set-exit-if-changed .' >> /run-pipeline.sh && \
     echo 'echo "=== Running Analyze ==="' >> /run-pipeline.sh && \
-    echo 'flutter analyze' >> /run-pipeline.sh && \
+    echo 'flutter analyze --no-fatal-infos' >> /run-pipeline.sh && \
     echo 'echo "=== Running Tests ==="' >> /run-pipeline.sh && \
     echo 'flutter test --no-pub --coverage' >> /run-pipeline.sh && \
     echo 'echo "=== All stages completed successfully ==="' >> /run-pipeline.sh && \

@@ -5,7 +5,7 @@ license: MIT
 repository: https://github.com/sophie-nayebi/OpenCloset
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.12.0 <4.0.0"
 
 resolutions:
   dependency_resolutions: dependency_resolutions.yaml

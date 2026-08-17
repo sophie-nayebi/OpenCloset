@@ -15,3 +15,4 @@
 ///
 /// await SyncService.connect(provider: CloudProvider.firebase);
 /// ```
+library;

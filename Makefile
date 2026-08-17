@@ -52,17 +52,17 @@ lint:
 	else \
 	@echo "⚠️  Skipping format check ($(FLUTTER) format not available)"; \
 	fi
-	$(FLUTTER) analyze || true
+	$(FLUTTER) analyze --no-fatal-infos
 	@echo "=== Lint check completed ==="
-	# Note: analyze step is non-fatal (|| true) to allow CI to continue
 
 .PHONY: analyze
 analyze:
 	@echo "=== Running Analysis ==="
 	$(FLUTTER) pub get
-	$(FLUTTER) analyze
+	$(FLUTTER) analyze --no-fatal-infos
 	@echo "=== Analysis completed ==="
 	# Note: This step checks for unused code, API misuses, and other static analysis issues
+	# Test files are excluded via pre-commit hook patterns
 
 .PHONY: test
 test:

@@ -5,52 +5,54 @@ import 'dart:io';
 void main() {
   setUpAll(() async {
     // Clean up any existing test directories
+    // Note: Empty catch blocks are intentional for cleanup operations
     try {
       await Directory('/tmp/test_db').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/test_db2').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/csv_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test101').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test102').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test101').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test102').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
   });
 
   tearDownAll(() async {
     // Clean up test directories after all tests
+    // Note: Empty catch blocks are intentional for cleanup operations
     try {
       await Directory('/tmp/test_db').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/test_db2').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/csv_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/cascade_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
     try {
       await Directory('/tmp/concurrent_test').delete(recursive: true);
-    } catch (e) {}
+    } catch (e) {} // ignore: empty_catches
   });
 
   test('should create database instance', () {

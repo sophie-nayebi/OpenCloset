@@ -12,3 +12,4 @@
 ///
 /// Result<SomeType> result = Result.success(...);
 /// ```
+library;

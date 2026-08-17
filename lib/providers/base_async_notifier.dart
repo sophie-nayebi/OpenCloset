@@ -120,12 +120,12 @@ class AsyncState<T> {
   /// final state = AsyncState.loading();
   /// ```
   factory AsyncState.loading() => AsyncState._(
-        _data: null,
-        _error: null,
-        _stackTrace: null,
-        _isData: false,
-        _isError: false,
-        _isLoading: true,
+        data: null,
+        error: null,
+        stackTrace: null,
+        isData: false,
+        isError: false,
+        isLoading: true,
       );
 
   /// A static constructor that creates a data state with the loaded value.
@@ -137,12 +137,12 @@ class AsyncState<T> {
   /// final state = AsyncState.data(user);
   /// ```
   factory AsyncState.data(T data) => AsyncState._(
-        _data: data,
-        _error: null,
-        _stackTrace: null,
-        _isData: true,
-        _isError: false,
-        _isLoading: false,
+        data: data,
+        error: null,
+        stackTrace: null,
+        isData: true,
+        isError: false,
+        isLoading: false,
       );
 
   /// A static constructor that creates an error state with the error details.
@@ -154,12 +154,12 @@ class AsyncState<T> {
   /// final state = AsyncState.error(error, stackTrace);
   /// ```
   factory AsyncState.error(Object error, StackTrace stackTrace) => AsyncState._(
-        _data: null,
-        _error: error,
-        _stackTrace: stackTrace,
-        _isData: false,
-        _isError: true,
-        _isLoading: false,
+        data: null,
+        error: error,
+        stackTrace: stackTrace,
+        isData: false,
+        isError: true,
+        isLoading: false,
       );
 
   /// Returns true if the state represents loading.
@@ -195,12 +195,12 @@ class AsyncState<T> {
   /// );
   /// ```
   U when<T>({
-    U Function()? loading,
-    U Function(Object error, StackTrace stackTrace)? error,
-    U Function(T)? data,
+    required U Function()? loading,
+    required U Function(Object error, StackTrace stackTrace)? onError,
+    required U Function(T) data,
   }) {
     if (loading != null && _isLoading) return loading();
-    if (error != null && _isError) return error(_error!, _stackTrace!);
+    if (onError != null && _isError) return onError(_error!, _stackTrace!);
     if (data != null && _isData) return data(_data!);
     throw UnsupportedError(
       'AsyncState ${_data != null ? 'data' : _isError ? 'error' : 'loading'} '
