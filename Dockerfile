@@ -7,7 +7,7 @@ FROM ubuntu:22.04 AS base
 ENV DEBIAN_FRONTEND=noninteractive
 ENV FLUTTER_VERSION=stable
 ENV PATH="/root/flutter/bin:$PATH"
-ENV FLUTTER_ROOT=/root/flutter
+ENV FLUTTER_ROOT=/root/flutter/flutter
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends wget \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /root/flutter /root/.pub-cache /tmp/flutter.tar.xz \
     && wget -q --show-progress https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz -O /tmp/flutter.tar.xz \
-    && tar -xf /tmp/flutter.tar.xz -C /root \
+    && tar -xf /tmp/flutter.tar.xz -C /root --strip-components=1 \
     && rm /tmp/flutter.tar.xz
 
 # =============================================================================
