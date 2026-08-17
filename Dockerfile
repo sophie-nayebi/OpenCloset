@@ -76,8 +76,8 @@ CMD $FLUTTER_ROOT/bin/flutter test --no-pub --coverage
 # =============================================================================
 FROM base AS pipeline
 WORKDIR /workspace
-RUN $FLUTTER_ROOT/bin/flutter pub get && \
-    $FLUTTER_ROOT/bin/flutter format --set-exit-if-changed . && \
-    $FLUTTER_ROOT/bin/flutter analyze --no-fatal-infos && \
-    $FLUTTER_ROOT/bin/flutter test --no-pub --coverage
+RUN /root/flutter/bin/flutter pub get && \
+    /root/flutter/bin/flutter format --set-exit-if-changed . && \
+    /root/flutter/bin/flutter analyze --no-fatal-infos && \
+    /root/flutter/bin/flutter test --no-pub --coverage
 CMD ["echo", "Pipeline completed successfully"]
